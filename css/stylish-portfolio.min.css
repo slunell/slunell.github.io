@@ -379,3 +379,8 @@ a:hover {
 .text-secondary {
     color: #ecb807!important
 }
+
+.tags
+{
+    display:inline;
+}
