@@ -26,6 +26,13 @@ body {
     text-transform: uppercase
 }
 
+@font-face {
+    font-family: "Mank Sans";
+    src: url("../css/manksans-webfont.eot");
+    src:
+    url("../css/manksans-webfont.woff") format("woff")
+}
+
 h1,
 h2,
 h3,
@@ -80,14 +87,14 @@ h6 {
 }
 
 .masthead {
-    min-height: 30rem;
+    min-height: 22rem;
     position: relative;
     display: table;
     width: 100%;
     height: auto;
-    padding-top: 8rem;
+    padding-top: 4rem;
     padding-bottom: 8rem;
-    background: linear-gradient(90deg, rgba(255, 255, 255, .1) 0, rgba(255, 255, 255, .1) 100%), url(../img/bg-masthead.jpg);
+    background: linear-gradient(90deg, rgba(255, 255, 255, .1) 0, rgba(255, 255, 255, .1) 100%), url(../img/coolimg.png);
     background-position: center center;
     background-repeat: no-repeat;
     background-size: cover
