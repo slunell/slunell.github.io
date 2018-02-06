@@ -27,15 +27,18 @@ body {
 }
 
 @font-face {
-    font-family: "Mank Sans";
-    src: url("../css/manksans-webfont.eot");
+    font-family: "MS";
+    src: url("../css/fonts/ms_light.eot");
     src:
-    url("../css/manksans-webfont.woff") format("woff");
+    url("../css/fonts/ms_light.woff");
     
+}
+
+@font-face {
     font-family: "Proxima Nova";
     src: url("../css/fonts/prox fonts/fonts/prox_reg.eot");
     src:
-    url("../css/fonts/prox fonts/fonts/prox_reg.woff") format("woff")
+    url("../css/fonts/prox fonts/fonts/prox_reg.woff") format("woff");
 }
 
 h1,
