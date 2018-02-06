@@ -30,7 +30,7 @@ body {
     font-family: "MS";
     src: url("../css/fonts/ms_light.eot");
     src:
-    url("../css/fonts/ms_light.woff");
+    url("../css/fonts/ms_light.woff") format("woff");
     
 }
 
