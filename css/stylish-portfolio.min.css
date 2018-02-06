@@ -30,7 +30,12 @@ body {
     font-family: "Mank Sans";
     src: url("../css/manksans-webfont.eot");
     src:
-    url("../css/manksans-webfont.woff") format("woff")
+    url("../css/manksans-webfont.woff") format("woff");
+    
+    font-family: "Proxima Nova";
+    src: url("../css/fonts/prox fonts/fonts/prox_reg.eot");
+    src:
+    url("../css/fonts/prox fonts/fonts/prox_reg.woff") format("woff")
 }
 
 h1,
