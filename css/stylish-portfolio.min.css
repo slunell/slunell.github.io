@@ -186,6 +186,10 @@ h6 {
     background: 0 0
 }
 
+.js-scroll-trigger {
+    font-size: 1.5em;
+}
+
 #sidebar-wrapper.active {
     right: 250px;
     width: 250px;
