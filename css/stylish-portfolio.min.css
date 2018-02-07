@@ -27,16 +27,15 @@ body {
 }
 
 @font-face {
-    font-family: "MS";
-    src: url("../css/fonts/ms_light.eot");
-    src: url("../css/fonts/ms_light.woff") format("woff");
-
-}
-
-@font-face {
     font-family: "Proxima Nova";
     src: url("../css/fonts/prox fonts/fonts/prox_reg.eot");
     src: url("../css/fonts/prox fonts/fonts/prox_reg.woff") format("woff");
+}
+
+@font-face {
+    font-family: "Freight";
+    src: url("../css/fonts/freight light SC.eot");
+    src: url("../css/fonts/freight light SC.woff") format("woff");
 }
 
 h1,
@@ -109,10 +108,14 @@ h6 {
 .masthead h1 {
     font-size: 4rem;
     padding: 0;
-    font-family: Proxima Nova, sans-serif;
+    font-family: Freight, sans-serif;
     color: white;
     margin-top: 0.8em;
     line-height: 90%
+}
+
+#name {
+    font-size: 6rem
 }
 
 @media (min-width:992px) {
