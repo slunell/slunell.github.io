@@ -420,24 +420,35 @@ a:hover {
 
 .tags {
     display: inline;
-    font-size: 1.2em;
-    border: 1px solid grey;
+    font-size: 1.1em;
+    border: 1px solid #A9A9A9;
     text-align: center;
     border-radius: 0.5em;
-    color: grey;
+    color: #B0B0B0;
     padding-left: .4em;
     padding-right: .4em;
-    padding-bottom: .1em;
+    padding-bottom: .05em;
     margin-right: 0.1em;
+    
+}
+
+.tagbreak{
+    margin-top: -.5em;
 }
 
 .tagdiv {
     margin: 0 auto;
-    margin-left: 0.7em
+    margin-left: 0.7em;
+    margin-bottom: 0.7em;
+    
 }
 
 #longtags {
-    line-height: 220%;
+    line-height: 195%;
+}
+
+#addXP {
+    padding-top: .5em;
 }
 
 .content-section {
