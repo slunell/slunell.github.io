@@ -192,7 +192,7 @@ h6 {
 
 #sidebar-wrapper.active {
     right: 250px;
-    width: 200px;
+    width: 230px;
     -webkit-transition: all .4s ease 0s;
     -moz-transition: all .4s ease 0s;
     -ms-transition: all .4s ease 0s;
