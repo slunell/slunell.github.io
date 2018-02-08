@@ -30,9 +30,9 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     
     <script>
-      window.addEventListener("load", function(event) {
+      window.addEventListener("DOMContentLoaded", function(event) {
         $("#name").addClass("fade-in")
-        $("#name").attr('id', 'name')
+        $("#name").attr('id', 'nameStay')
       });
     </script>
 
@@ -84,7 +84,7 @@
     <!-- Header -->
     <header class="masthead d-flex">
         <div class="container text-center">
-            <h1 class="mb-1">Scott Lunell</h1>
+            <h1 class="mb-1" id="name">Scott Lunell</h1>
             <h3 class="mb-5">
                 <em></em>
             </h3>
