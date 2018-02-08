@@ -26,6 +26,24 @@ body {
     text-transform: uppercase
 }
 
+.fade-in {
+	opacity: 0;
+	animation-name: fadeInOpacity;
+	animation-iteration-count: 1;
+	animation-timing-function: ease-in;
+	animation-duration: 2s;
+    font-size: 6rem;
+}
+
+@keyframes fadeInOpacity {
+	0% {
+		opacity: 0;
+	}
+	100% {
+		opacity: 1;
+	}
+}
+
 @font-face {
     font-family: "Proxima Nova";
     src: url("../css/fonts/prox fonts/fonts/prox_reg.eot");
@@ -115,7 +133,12 @@ h6 {
 }
 
 #name {
+    opacity: 0;
+}
+
+#nameStay {
     font-size: 6rem;
+    opacity: 1;
 }
 
 @media (min-width:992px) {
