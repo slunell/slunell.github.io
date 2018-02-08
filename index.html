@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 
-  <head>
+<head>
 
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="">
-    <meta name="author" content="">
+    <meta name="description" content="My Portfolio">
+    <meta name="author" content="Scott Lunell">
 
     <title>Scott Lunell</title>
 
@@ -23,6 +23,24 @@
         gtag('js', new Date());
 
         gtag('config', 'UA-113690313-1');
+
+    </script>
+
+    <!-- jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    
+    <script>
+        $(document).ready(function() {
+          function setHeight() {
+            windowHeight = $(window).innerHeight();
+            $('.masthead').css('min-height', windowHeight);
+          };
+          setHeight();
+
+          $(window).resize(function() {
+            setHeight();
+          });
+        });
     </script>
 
 
