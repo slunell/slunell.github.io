@@ -1,0 +1,617 @@
+<html>
+	<head>
+		<meta charset=utf-8>
+		<title>Audio Visualizer App</title>
+		<style>
+		body {
+			margin: 0;
+			padding: 0;
+			width: 100%; /* full window width */
+			text-align: center;
+		}
+			canvas { width: 100%; height: 100%; }
+
+			img {
+				width: 20px;
+				height: 20px;
+			}
+
+			audio::-webkit-media-controls-panel {
+				background-color: black;
+			}
+
+			input[type=file]::-webkit-file-upload-button {
+				background-color: grey;
+				color: black;
+				font-family: helvetica;
+				visibility: hidden;
+			}
+
+			audio::-webkit-media-controls-volume-slider {
+				/*background-color: green;*/
+			}
+
+			#play {
+				font-family: arial;
+				color: silver;
+				background-color: black;
+                padding-left: .7em
+			}
+
+			#wrapper {
+				width: 50%;
+				text-align: left;
+				margin-left: 1%;
+			}
+
+			#jpg {
+				width: 10%;
+				display: inline-block;
+				float: left;
+				margin-top: 1%;
+			}
+
+			#choose {
+				width: 0%;
+				display: inline-block;
+				float: left;
+			}
+
+			#begin {
+				width: 8%;
+				display: inline-block;
+				float: left;
+				margin-top: 1%;
+			}
+
+			#panel {
+				display: inline-block;
+				float: left;
+				margin-top: 0.2%;
+			}
+		</style>
+        
+        <!-- jQuery -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        
+        <!-- Bootstrap Core CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        
+        
+        
+	</head>
+
+	<body style="background-color: black;">
+		<div class="row">
+			<div class="col col-md-1 pt-1 ml-2">
+				<img src="search.png" onclick="document.getElementById('music-files').click();"/>
+                <a id="play" onclick = "play()" >Begin</a>
+			</div>
+            
+			<div class="col col-md-1 pt-1">
+                <audio id="music" src="" controls controlsList="nodownload"></audio>
+				<input type="file" id="music-files" multiple accept="audio/*" style="color: black; background-color: black;"/>
+			</div>
+            <div class="col col-md-1 offset-3"></div>
+		</div>
+
+			<script src="three.js"></script>
+			<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+
+			<script>
+			window.onload = function(e) {
+				document.getElementById('music-files').addEventListener('change', selectMusic, false);
+			}
+
+            
+
+			var musicFiles = [];
+			var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+			var audio;
+			var audioSrc;
+			var analyser;
+			var bufferLength;
+			var dataArray = new Uint8Array(1024);
+
+			function selectMusic(e) {
+				musicFiles = e.target.files;
+			}
+
+			function getFreq(){
+				requestAnimationFrame(getFreq);
+				analyser.getByteFrequencyData(dataArray);
+			}
+
+			function play(){
+				var num = Math.floor(Math.random()*musicFiles.length);
+				var musicFile = URL.createObjectURL(musicFiles[num]);
+				$("#music").attr("src", musicFile);
+				document.getElementById('music').play();
+
+				audio = document.getElementById('music');
+				audioSrc = audioCtx.createMediaElementSource(audio);
+				analyser = audioCtx.createAnalyser();
+				audioSrc.connect(analyser);
+			  audioSrc.connect(audioCtx.destination);
+				bufferLength = analyser.frequencyBinCount;
+				dataArray = new Uint8Array(bufferLength);
+				getFreq();
+				animate();
+			}
+
+			function stop(){
+				document.getElementById('music').pause();
+			}
+
+			var scene = new THREE.Scene();
+			var camera = new THREE.PerspectiveCamera( 40, window.innerWidth / window.innerHeight, 0.1, 1000 );
+
+			var renderer = new THREE.WebGLRenderer();
+			renderer.setSize( window.innerWidth *.98, window.innerHeight * .93);
+			document.body.appendChild( renderer.domElement );
+
+			var geometry = new THREE.BoxGeometry( 0.5, 0.5, 0.5 );
+			var material = new THREE.MeshBasicMaterial( { color: "rgb(0, 0, 255)" } );
+			var material1 = new THREE.MeshBasicMaterial( { color: "rgb(0, 0, 255)" } );
+			var material2 = new THREE.MeshBasicMaterial( { color: "rgb(0, 0, 255)" } );
+			var material3 = new THREE.MeshBasicMaterial( { color: "rgb(0, 0, 255)" } );
+			var material4 = new THREE.MeshBasicMaterial( { color: "rgb(0, 0, 255)" } );
+
+
+			var cube = new THREE.Mesh( geometry, material );
+			var cube1 = new THREE.Mesh( geometry, material1 );
+			var cube2 = new THREE.Mesh( geometry, material2 );
+			var cube3 = new THREE.Mesh( geometry, material3 );
+			var cube4 = new THREE.Mesh( geometry, material4 );
+
+			cube.position.set(2, 0, 0);
+			cube1.position.set(1, 0, 0);
+			cube2.position.set(-1, 0, 0);
+			cube3.position.set(-2, 0, 0);
+
+			scene.add( cube3 );
+			scene.add( cube2 );
+			scene.add( cube );
+			scene.add( cube1 );
+			scene.add( cube4 );
+
+			var geo = new THREE.EdgesGeometry( geometry ); // or WireframeGeometry( geometry )
+
+			var mat = new THREE.MeshBasicMaterial( { color: "darkblue"} );
+
+			var wireframe = new THREE.LineSegments( geo, mat );
+			var wireframe1 = new THREE.LineSegments( geo, mat );
+			var wireframe2 = new THREE.LineSegments( geo, mat );
+			var wireframe3 = new THREE.LineSegments( geo, mat );
+			var wireframe4 = new THREE.LineSegments( geo, mat );
+
+			wireframe.position.set(1, 0, 0);
+			wireframe1.position.set(2, 0, 0);
+			wireframe2.position.set(-1, 0, 0);
+			wireframe3.position.set(-2, 0, 0);
+
+			scene.add( wireframe );
+			scene.add( wireframe1 );
+			scene.add( wireframe2 );
+			scene.add( wireframe3 );
+			scene.add( wireframe4 );
+
+			var geo1 = new THREE.SphereGeometry( 0.01, 33, 33, );
+			var mat1 = new THREE.MeshBasicMaterial( {color: "white"} );
+			var s1 = new THREE.Mesh( geo1, mat1 );
+			var s2 = new THREE.Mesh( geo1, mat1 );
+			var s3 = new THREE.Mesh( geo1, mat1 );
+			var s4 = new THREE.Mesh( geo1, mat1 );
+			var s5 = new THREE.Mesh( geo1, mat1 );
+			var s6 = new THREE.Mesh( geo1, mat1 );
+			var s7 = new THREE.Mesh( geo1, mat1 );
+			var s8 = new THREE.Mesh( geo1, mat1 );
+			var s9 = new THREE.Mesh( geo1, mat1 );
+			var s10 = new THREE.Mesh( geo1, mat1 );
+
+
+			scene.add( s1 );
+			scene.add( s2 );
+			scene.add( s3 );
+			scene.add( s4 );
+			scene.add( s5 );
+			scene.add( s6 );
+			scene.add( s7 );
+			scene.add( s8 );
+			scene.add( s9 );
+			scene.add( s10 );
+
+			var randY1;
+			var randY2;
+			var randY3;
+			var randY4;
+			var randY5;
+			var randY6;
+			var randY7;
+			var randY8;
+			var randY9;
+			var randY10;
+
+			var xDist1;
+			var xDist2;
+			var xDist3;
+			var xDist4;
+			var xDist5;
+			var xDist6;
+			var xDist7;
+			var xDist8;
+			var xDist9;
+			var xDist10;
+
+			var size1 = (Math.random() * 2) + 0.5;
+			var size2 = (Math.random() * 2) + 0.5;
+			var size3 = (Math.random() * 2) + 0.5;
+			var size4 = (Math.random() * 2) + 0.5;
+			var size5 = (Math.random() * 2) + 0.5;
+			var size6 = (Math.random() * 2) + 0.5;
+			var size7 = (Math.random() * 2) + 0.5;
+			var size8 = (Math.random() * 2) + 0.5;
+			var size9 = (Math.random() * 2) + 0.5;
+			var size10 = (Math.random() * 2) + 0.5;
+
+			var go1 = true;
+			var go2 = true;
+			var go3 = true;
+			var go4 = true;
+			var go5 = true;
+			var go6 = true;
+			var go7 = true;
+			var go8 = true;
+			var go9 = true;
+			var go10 = true;
+
+			var count = 0;
+
+			camera.position.z = 5;
+
+			function animate() {
+				requestAnimationFrame( animate );
+				cube1.scale.y = cube.scale.y = cube2.scale.y = cube3.scale.y = cube4.scale.y = wireframe.scale.y = wireframe1.scale.y = wireframe2.scale.y = wireframe3.scale.y = wireframe4.scale.y = 1;
+
+
+				var bin1 = 0;
+				var bin2 = 0;
+				var bin3 = 0;
+				var bin4 = 0;
+				var bin5 = 0;
+
+				count++;
+
+				for (var i = 0; i < dataArray.length; i++) {
+					if (dataArray[i] > 0 && dataArray[i] < 52) {
+						bin1 += dataArray[i];
+					} else if (dataArray[i] > 51 && dataArray[i] < 103) {
+						bin2 += dataArray[i];
+					} else if (dataArray[i] > 102 && dataArray[i] < 154) {
+						bin3 += dataArray[i];
+					} else if (dataArray[i] > 153 && dataArray[i] < 205) {
+						bin4 += dataArray[i];
+					} else if (dataArray[i] > 204) {
+						bin5 += dataArray[i];
+					}
+				}
+
+				cube3.scale.y += bin1 / 10000;
+				wireframe3.scale.y += bin1 / 10000;
+				cube2.scale.y += bin2 / 10000;
+				wireframe2.scale.y += bin2 / 10000;
+				cube.scale.y += bin3 / 10000;
+				wireframe1.scale.y += bin3 / 10000;
+				cube1.scale.y += bin4 / 10000;
+				wireframe.scale.y += bin4/10000;
+				cube4.scale.y += bin5 / 10000;
+				wireframe4.scale.y += bin5 / 10000;
+
+				//console.log(bin5 / 10000);
+
+
+				var red1 = bin1 / 50000;
+				var red2 = bin2 / 50000;
+				var red3 = bin3 / 50000;
+				var red4 = bin4 / 50000;
+				var red5 = bin5 / 50000;
+
+				cube.material.color.setRGB(red3, 0, (1-red3)/1.5);
+				cube1.material.color.setRGB(red4, 0, (1-red4)/1.5);
+				cube2.material.color.setRGB(red2, 0, (1-red2)/1.5);
+				cube3.material.color.setRGB(red1, 0, (1-red1)/1.5);
+				cube4.material.color.setRGB(red5, 0, (1-red5)/1.5);
+
+				if (randY1 == null) {
+					if (count % 500 == 10) {
+						randY1 = Math.random();
+						randY1 *= Math.floor(Math.random()*2) == 1 ? 1 : -1;
+
+						xDist1 = 0.005;
+						xDist1 *= Math.floor(Math.random()*2) == 1 ? 1 : -1;
+
+						size1 = (Math.random() * 2) + 0.5;
+
+						go1 = true;
+					}
+
+				} else if (randY2 == null) {
+					if (count % 500 == 60) {
+						randY2 = Math.random();
+						randY2 *= Math.floor(Math.random()*2) == 1 ? 1 : -1;
+
+						xDist2 = 0.005;
+						xDist2 *= Math.floor(Math.random()*2) == 1 ? 1 : -1;
+
+						size2 = (Math.random() * 2) + 0.5;
+
+						go2 = true;
+					}
+
+				} else if (randY3 == null) {
+					if (count % 500 == 110) {
+						randY3 = Math.random();
+						randY3 *= Math.floor(Math.random()*2) == 1 ? 1 : -1;
+
+						xDist3 = 0.005;
+						xDist3 *= Math.floor(Math.random()*2) == 1 ? 1 : -1;
+
+						size3 = (Math.random() * 2) + 0.5;
+
+						go3 = true;
+					}
+
+				} else if (randY4 == null) {
+					if (count % 500 == 160) {
+						randy4 = Math.random();
+						randY4 *= Math.floor(Math.random()*2) == 1 ? 1 : -1;
+
+						xDist4 = 0.005;
+						xDist4 *= Math.floor(Math.random()*2) == 1 ? 1 : -1;
+						size4 = (Math.random() * 2) + 0.5;
+						go4 = true;
+					}
+
+				} else if (randY5 == null) {
+					if (count % 500 == 210) {
+						randY5 = Math.random();
+						randY5 *= Math.floor(Math.random()*2) == 1 ? 1 : -1;
+
+						xDist5 = 0.005;
+						xDist5 *= Math.floor(Math.random()*2) == 1 ? 1 : -1;
+						size5 = (Math.random() * 2) + 0.5;
+						go5 = true;
+					}
+
+				} else if (randY6 == null) {
+					if (count % 500 == 260) {
+						randY6 = Math.random();
+						randY6 *= Math.floor(Math.random()*2) == 1 ? 1 : -1;
+
+						xDist6 = 0.005;
+						xDist6 *= Math.floor(Math.random()*2) == 1 ? 1 : -1;
+						size6 = (Math.random() * 2) + 0.5;
+						go6 = true;
+					}
+
+				} else if (randY7 == null) {
+					if (count % 500 == 310) {
+						randY7 = Math.random();
+						randY7 *= Math.floor(Math.random()*2) == 1 ? 1 : -1;
+
+						xDist7 = 0.005;
+						xDist7 *= Math.floor(Math.random()*2) == 1 ? 1 : -1;
+						size7 = (Math.random() * 2) + 0.5;
+						go7 = true;
+					}
+
+				} else if (randY8 == null) {
+					if (count % 500 == 360) {
+						randY8 = Math.random();
+						randY8 *= Math.floor(Math.random()*2) == 1 ? 1 : -1;
+
+						xDist8 = 0.005;
+						xDist8 *= Math.floor(Math.random()*2) == 1 ? 1 : -1;
+						size8 = (Math.random() * 2) + 0.5;
+						go8 = true;
+					}
+
+				} else if (randY9 == null) {
+					if (count % 500 == 410) {
+						randY9 = Math.random();
+						randY9 *= Math.floor(Math.random()*2) == 1 ? 1 : -1;
+
+						xDist9 = 0.005;
+						xDist9 *= Math.floor(Math.random()*2) == 1 ? 1 : -1;
+						size9 = (Math.random() * 2) + 0.5;
+						go9 = true;
+					}
+
+				} else if (randY10 == null) {
+					if (count % 500 == 460) {
+						randY10 = Math.random();
+						randY10 *= Math.floor(Math.random()*2) == 1 ? 1 : -1;
+
+						xDist10 = 0.005;
+						xDist10 *= Math.floor(Math.random()*2) == 1 ? 1 : -1;
+
+						size10 = (Math.random() * 2) + 0.5;
+
+						go10 = true;
+					}
+
+				}
+
+				if (go1) {
+
+					if (Math.abs(s1.position.x) < 2.2) {
+						s1.translateX(xDist1);
+						s1.translateY(randY1 / 100);
+						s1.translateZ(0.005);
+					} else {
+						randY1 = null;
+						go1 = false;
+						s1.position.set(0, 0, -1);
+						s1.scale.x = size1;
+						s1.scale.y = size1;
+						s1.scale.z = size1;
+					}
+
+				}
+
+				if (go2) {
+
+					if (Math.abs(s2.position.x) < 2.2) {
+						s2.translateX(xDist2);
+						s2.translateY(randY2 / 100);
+						s2.translateZ(0.005);
+					} else {
+						randY2 = null;
+						go2 = false;
+						s2.position.set(0, 0, -1);
+						s2.scale.x = size2;
+						s2.scale.y = size2;
+						s2.scale.z = size2;
+					}
+
+				}
+
+				if (go3) {
+					if (Math.abs(s3.position.x) < 2.2) {
+						s3.translateX(xDist3);
+						s3.translateY(randY3 / 100);
+						s3.translateZ(0.005);
+					} else {
+						randY3 = null;
+						go3 = false;
+						s3.position.set(0, 0, -1);
+						s3.scale.x = size3;
+						s3.scale.y = size3;
+						s3.scale.z = size3;
+					}
+
+				}
+
+
+			if (go4) {
+				if (Math.abs(s4.position.x) < 2.2) {
+					s4.translateX(xDist4);
+					s4.translateY(randY4 / 100);
+					s4.translateZ(0.005);
+				} else {
+					randY4 = null;
+					go4 = false;
+					s4.position.set(0, 0, -1);
+					s4.scale.x = size4;
+					s4.scale.y = size4;
+					s4.scale.z = size4;
+				}
+
+			}
+
+			if (go5) {
+				if (Math.abs(s5.position.x) < 2.2) {
+					s5.translateX(xDist5);
+					s5.translateY(randY5 / 100);
+					s5.translateZ(0.005);
+				} else {
+					randY5 = null;
+					go5 = false;
+					s5.position.set(0, 0, -1);
+					s5.scale.x = size5;
+					s5.scale.y = size5;
+					s5.scale.z = size5;
+				}
+
+			}
+
+			if (go6) {
+				if (Math.abs(s6.position.x) < 2.2) {
+					s6.translateX(xDist6);
+					s6.translateY(randY6 / 100);
+					s6.translateZ(0.005);
+				} else {
+					randY6 = null;
+					go6 = false;
+					s6.position.set(0, 0,-1);
+					s6.scale.x = size6;
+					s6.scale.y = size6;
+					s6.scale.z = size6;
+				}
+
+			}
+
+			if (go7) {
+				if (Math.abs(s7.position.x) < 2.2) {
+					s7.translateX(xDist7);
+					s7.translateY(randY7 / 100);
+					s7.translateZ(0.005);
+				} else {
+					randY7 = null;
+					go7 = false;
+					s7.position.set(0, 0, -1);
+					s7.scale.x = size7;
+					s7.scale.y = size7;
+					s7.scale.z = size7;
+				}
+
+			}
+
+			if (go8) {
+				if (Math.abs(s8.position.x) < 2.2) {
+					s8.translateX(xDist8);
+					s8.translateY(randY8 / 100);
+					s8.translateZ(0.005);
+				} else {
+					randY8 = null;
+					go8 = false;
+					s8.position.set(0, 0, -1);
+					s8.scale.x = size8;
+					s8.scale.y = size8;
+					s8.scale.z = size8;
+				}
+
+			}
+
+			if (go9) {
+				if (Math.abs(s9.position.x) < 2.2) {
+					s9.translateX(xDist9);
+					s9.translateY(randY9 / 100);
+					s9.translateZ(0.005);
+				} else {
+					randY9 = null;
+					go9 = false;
+					s9.position.set(0, 0, -1);
+					s9.scale.x = size9;
+					s9.scale.y = size9;
+					s9.scale.z = size9;
+				}
+
+			}
+
+			if (go10) {
+				if (Math.abs(s10.position.x) < 2.2) {
+					s10.translateX(xDist10);
+					s10.translateY(randY10 / 100);
+					s10.translateZ(0.005);
+				} else {
+					randY10 = null;
+					go10 = false;
+					s10.position.set(0, 0, -1);
+					s10.scale.x = size10;
+					s10.scale.y = size10;
+					s10.scale.z = size10;
+				}
+
+			}
+
+			renderer.render( scene, camera );
+		}
+
+
+
+			animate();
+
+			</script>
+	</body>
+</html>
