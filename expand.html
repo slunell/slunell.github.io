@@ -29,15 +29,25 @@
 			}
 
 			audio::-webkit-media-controls-volume-slider {
-				/*background-color: green;*/
+				display: none;
 			}
+            
+            audio::-webkit-media-controls-mute-button {
+                display:none;
+            }
 
 			#play {
 				font-family: arial;
 				color: silver;
 				background-color: black;
-                padding-left: 2em
+                padding-left: 2em;
+                vertical-align: text-bottom;
 			}
+            
+            #play > span {
+                vertical-align: sub;
+            }
+
 			
 
 			#choose {
@@ -71,12 +81,12 @@
 
 	<body style="background-color: black;">
 		<div class="row" style="position: fixed;">
-			<div class="col col-md-2 pt-1 ml-2">
+			<div class="col col-md-2 pt-2 ml-4">
 				<img src="search.png" onclick="document.getElementById('music-files').click();"/>
-                <a id="play" onclick = "play()" >Begin</a>
+                <a id="play" onclick = "play()" ><span>Begin</span></a>
 			</div>
             
-			<div class="col col-md-1 pt-1">
+			<div class="col col-md-1 pt-2">
                 <audio id="music" src="" controls controlsList="nodownload"></audio>
 				<input type="file" id="music-files" multiple accept="audio/*" style="color: black; background-color: black;"/>
 			</div>
