@@ -48,7 +48,9 @@
                 vertical-align: sub;
             }
 
-			
+            #play > span:hover {
+                cursor: pointer;
+            }
 
 			#choose {
 				width: 0%;
@@ -68,6 +70,10 @@
 				float: left;
 				margin-top: 0.2%;
 			}
+            
+            #search {
+                cursor: pointer;
+            }
 
 		</style>
         
@@ -82,7 +88,7 @@
 	<body style="background-color: black;">
 		<div class="row" style="position: fixed;">
 			<div class="col col-md-2 pt-2 ml-4">
-				<img src="search.png" onclick="document.getElementById('music-files').click();"/>
+				<img id="search" src="search.png" onclick="document.getElementById('music-files').click();"/>
                 <a id="play" onclick = "play()" ><span>Begin</span></a>
 			</div>
             
