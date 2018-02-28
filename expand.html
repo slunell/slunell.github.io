@@ -49,7 +49,7 @@
             vertical-align: text-bottom;
         }
 
-        #play>span {
+        #play > span {
             vertical-align: sub;
         }
 
@@ -131,6 +131,7 @@
         var analyser;
         var bufferLength;
         var dataArray = new Uint8Array(1024);
+        var myAudio = document.getElementById('music');
 
         function selectMusic(e) {
             musicFiles = e.target.files;
@@ -162,10 +163,9 @@
             getFreq();
             animate();
         }
-
-        function stop() {
-            document.getElementById('music').pause();
-            animateStart();
+        
+        function isPaused(audelem) { 
+            return audelem.paused; 
         }
 
         var scene = new THREE.Scene();
@@ -201,8 +201,6 @@
 
         camera.position.z = 5;
 
-
-
         function animateStart() {
             requestAnimationFrame(animateStart);
             cube.scale = cube1.scale = cube2.scale = cube3.scale = 1;
@@ -222,43 +220,71 @@
 
             renderer.render(scene, camera);
         }
-        //var myAudio = document.querySelector('audio');
+        
+        
         function animate() {
+            
             requestAnimationFrame(animate);
-            cube.scale.x = cube1.scale.x = cube2.scale.x = cube3.scale.x = 0.025;
-            cube.scale.y = cube1.scale.y = cube2.scale.y = cube3.scale.y = 0.025;
-            cube.scale.z = cube1.scale.z = cube2.scale.z = cube3.scale.z = 0.025;
+            
+            if (isPaused(myAudio)) {
+                
+                cube.scale.set(1, 1, 1);
+                cube1.scale.set(1, 1, 1);
+                cube2.scale.set(1, 1, 1);
+                cube3.scale.set(1, 1, 1);
 
-            for (var i = 0; i < dataArray.length; i++) {
-                cube.scale.x += Math.pow(dataArray[i], 1.15) / 100000;
-                cube.scale.y += Math.pow(dataArray[i], 1.15) / 100000;
-                cube.scale.z += Math.pow(dataArray[i], 1.15) / 100000;
+                cube.rotation.x += 0.011;
+                cube.rotation.y += 0.011;
 
-                cube1.scale.x += Math.pow(dataArray[i], 1.15) / 100000;
-                cube1.scale.y += Math.pow(dataArray[i], 1.15) / 100000;
-                cube1.scale.z += Math.pow(dataArray[i], 1.15) / 100000;
+                cube1.rotation.x -= 0.011;
+                cube1.rotation.y -= 0.011;
 
-                cube2.scale.x += Math.pow(dataArray[i], 1.15) / 100000;
-                cube2.scale.y += Math.pow(dataArray[i], 1.15) / 100000;
-                cube2.scale.z += Math.pow(dataArray[i], 1.15) / 100000;
+                cube2.rotation.x += 0.006;
+                cube2.rotation.y += 0.006;
 
-                cube3.scale.x += Math.pow(dataArray[i], 1.15) / 100000;
-                cube3.scale.y += Math.pow(dataArray[i], 1.15) / 100000;
-                cube3.scale.z += Math.pow(dataArray[i], 1.15) / 100000;
+                cube3.rotation.x -= 0.006;
+                cube3.rotation.y -= 0.006;
+                
+            } else {
+                
+                cube.scale.set(0.025, 0.025, 0.025);
+                cube1.scale.set(0.025, 0.025, 0.025);
+                cube2.scale.set(0.025, 0.025, 0.025);
+                cube3.scale.set(0.025, 0.025, 0.025);
+
+                for (var i = 0; i < dataArray.length; i++) {
+                    
+                    cube.scale.x += Math.pow(dataArray[i], 1.15) / 100000;
+                    cube.scale.y += Math.pow(dataArray[i], 1.15) / 100000;
+                    cube.scale.z += Math.pow(dataArray[i], 1.15) / 100000;
+
+                    cube1.scale.x += Math.pow(dataArray[i], 1.15) / 100000;
+                    cube1.scale.y += Math.pow(dataArray[i], 1.15) / 100000;
+                    cube1.scale.z += Math.pow(dataArray[i], 1.15) / 100000;
+
+                    cube2.scale.x += Math.pow(dataArray[i], 1.15) / 100000;
+                    cube2.scale.y += Math.pow(dataArray[i], 1.15) / 100000;
+                    cube2.scale.z += Math.pow(dataArray[i], 1.15) / 100000;
+
+                    cube3.scale.x += Math.pow(dataArray[i], 1.15) / 100000;
+                    cube3.scale.y += Math.pow(dataArray[i], 1.15) / 100000;
+                    cube3.scale.z += Math.pow(dataArray[i], 1.15) / 100000;
+                }
+
+                cube.rotation.x += 0.01;
+                cube.rotation.y += 0.01;
+
+                cube1.rotation.x -= 0.01;
+                cube1.rotation.y -= 0.01;
+
+                cube2.rotation.x += 0.005;
+                cube2.rotation.y += 0.005;
+
+                cube3.rotation.x -= 0.005;
+                cube3.rotation.y -= 0.005;
+                
             }
-
-            cube.rotation.x += 0.01;
-            cube.rotation.y += 0.01;
-
-            cube1.rotation.x -= 0.01;
-            cube1.rotation.y -= 0.01;
-
-            cube2.rotation.x += 0.005;
-            cube2.rotation.y += 0.005;
-
-            cube3.rotation.x -= 0.005;
-            cube3.rotation.y -= 0.005;
-
+            
             renderer.render(scene, camera);
 
         }

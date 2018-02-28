@@ -135,8 +135,7 @@
             document.getElementById('music-files').addEventListener('change', selectMusic, false);
         }
 
-
-
+        
         var musicFiles = [];
         var audioCtx = new(window.AudioContext || window.webkitAudioContext)();
         var audio;
@@ -174,10 +173,6 @@
             dataArray = new Uint8Array(bufferLength);
             getFreq();
             animate();
-        }
-
-        function stop() {
-            document.getElementById('music').pause();
         }
 
         var scene = new THREE.Scene();
@@ -249,6 +244,7 @@
         var mat1 = new THREE.MeshBasicMaterial({
             color: "white"
         });
+        
         var s1 = new THREE.Mesh(geo1, mat1);
         var s2 = new THREE.Mesh(geo1, mat1);
         var s3 = new THREE.Mesh(geo1, mat1);
@@ -321,6 +317,7 @@
         camera.position.z = 5;
 
         function animate() {
+            
             requestAnimationFrame(animate);
             cube1.scale.y = cube.scale.y = cube2.scale.y = cube3.scale.y = cube4.scale.y = wireframe.scale.y = wireframe1.scale.y = wireframe2.scale.y = wireframe3.scale.y = wireframe4.scale.y = 1;
 
@@ -659,9 +656,8 @@
             renderer.render(scene, camera);
         }
 
-
-
         animate();
+        
     </script>
 </body>
 </html>
