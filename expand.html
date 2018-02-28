@@ -49,7 +49,7 @@
             vertical-align: text-bottom;
         }
 
-        #play > span {
+        #play>span {
             vertical-align: sub;
         }
 
@@ -79,11 +79,10 @@
         #search {
             cursor: pointer;
         }
-        
+
         #music-files {
             width: 0;
         }
-        
     </style>
 
     <!-- jQuery -->
@@ -95,19 +94,20 @@
 </head>
 
 <body style="background-color: black;">
-    <div class="row" style="position: fixed;">
-        <div class="col col-md-2 pt-2 ml-4">
-            <img id="search" src="../img/search.png" onclick="document.getElementById('music-files').click();" />
-            <a id="play" onclick="play()"><span>Begin</span></a>
-        </div>
+    <div class="container-fluid" style="position: fixed;">
+        <div class="row" >
+            <div class="col col-md-2 pt-2 ml-4">
+                <img id="search" src="../img/search.png" onclick="document.getElementById('music-files').click();" />
+                <a id="play" onclick="play()"><span>Beginn</span></a>
+            </div>
 
-        <div class="col col-md-1 pt-2">
-            <audio id="music" src="" controls controlsList="nodownload"></audio>
-            <input type="file" id="music-files" multiple accept="audio/*" />
+            <div class="col col-md-1 pt-2">
+                <audio id="music" src="" controls controlsList="nodownload"></audio>
+                <input type="file" id="music-files" multiple accept="audio/*" />
+            </div>
+
         </div>
-        <div class="col col-md-1 offset-3"></div>
     </div>
-
     <script src="../js/three.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
 
@@ -143,14 +143,14 @@
         }
 
         function play() {
-            if (musicFiles.length > 0){
+            if (musicFiles.length > 0) {
                 var num = Math.floor(Math.random() * musicFiles.length);
                 var musicFile = URL.createObjectURL(musicFiles[num]);
                 $("#music").attr("src", musicFile);
             } else {
                 $("#music").attr("src", "mp3/seven.mp3");
             }
-            
+
             document.getElementById('music').play();
 
             audio = document.getElementById('music');
@@ -163,9 +163,9 @@
             getFreq();
             animate();
         }
-        
-        function isPaused(audelem) { 
-            return audelem.paused; 
+
+        function isPaused(audelem) {
+            return audelem.paused;
         }
 
         var scene = new THREE.Scene();
@@ -220,14 +220,14 @@
 
             renderer.render(scene, camera);
         }
-        
-        
+
+
         function animate() {
-            
+
             requestAnimationFrame(animate);
-            
+
             if (isPaused(myAudio)) {
-                
+
                 cube.scale.set(1, 1, 1);
                 cube1.scale.set(1, 1, 1);
                 cube2.scale.set(1, 1, 1);
@@ -244,16 +244,16 @@
 
                 cube3.rotation.x -= 0.006;
                 cube3.rotation.y -= 0.006;
-                
+
             } else {
-                
+
                 cube.scale.set(0.025, 0.025, 0.025);
                 cube1.scale.set(0.025, 0.025, 0.025);
                 cube2.scale.set(0.025, 0.025, 0.025);
                 cube3.scale.set(0.025, 0.025, 0.025);
 
                 for (var i = 0; i < dataArray.length; i++) {
-                    
+
                     cube.scale.x += Math.pow(dataArray[i], 1.15) / 100000;
                     cube.scale.y += Math.pow(dataArray[i], 1.15) / 100000;
                     cube.scale.z += Math.pow(dataArray[i], 1.15) / 100000;
@@ -282,13 +282,13 @@
 
                 cube3.rotation.x -= 0.005;
                 cube3.rotation.y -= 0.005;
-                
+
             }
-            
+
             renderer.render(scene, camera);
 
         }
     </script>
-    
+
 </body>
 </html>
