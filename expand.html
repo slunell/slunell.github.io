@@ -92,6 +92,19 @@
         #header-style {
             position: fixed;
         }
+        
+        #first-div {
+            margin-left: 1em;
+        }
+        
+        @media only screen and (max-width: 500px) {
+            #first-div {
+                text-align: center;
+                margin-left: 0em;
+            }
+            
+            
+        }
     </style>
 
     <!-- jQuery -->
@@ -105,7 +118,7 @@
 <body id="body-color">
     <div class="container-fluid">
     <div class="row" id="header-style">
-        <div class="col col-md-2 pt-2 ml-4" id="first-div">
+        <div class="col col-md-2 pt-2" id="first-div">
             <img id="search" src="../img/search.png" onclick="document.getElementById('music-files').click();" />
             <a id="play" onclick="play()"><span>Begin</span></a>
         </div>
