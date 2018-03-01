@@ -83,6 +83,9 @@
         #music-files {
             width: 0;
         }
+        
+        
+        
     </style>
 
     <!-- jQuery -->
@@ -94,14 +97,14 @@
 </head>
 
 <body style="background-color: black;">
-    <div class="container" style="position: fixed;">
-        <div class="row" >
-            <div class="col col-md-2 pt-2 ml-4">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col col-md-2 pt-2 ml-4" id="first-div">
                 <img id="search" src="../img/search.png" onclick="document.getElementById('music-files').click();" />
                 <a id="play" onclick="play()"><span>Begin</span></a>
             </div>
 
-            <div class="col col-md-1 pt-2">
+            <div class="col pt-2" id="sec-div">
                 <audio id="music" src="" controls controlsList="nodownload"></audio>
                 <input type="file" id="music-files" multiple accept="audio/*" />
             </div>
@@ -111,127 +114,100 @@
     <script src="../js/three.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
 
-    <script>
-        var ratio = window.innerHeight / window.innerWidth;
-        window.addEventListener('resize', function() {
-            renderer.setSize(window.innerWidth * .99, window.innerWidth * ratio * .99);
-        });
+        <script>
+            var ratio = window.innerHeight / window.innerWidth;
+            window.addEventListener('resize', function() {
+                renderer.setSize(window.innerWidth * .99, window.innerWidth * ratio * .99);
+            });
 
-        window.onload = function(e) {
-            document.getElementById('music-files').addEventListener('change', selectMusic, false);
-            animateStart();
-        }
-
-
-
-        var musicFiles = [];
-        var audioCtx = new(window.AudioContext || window.webkitAudioContext)();
-        var audio;
-        var audioSrc;
-        var analyser;
-        var bufferLength;
-        var dataArray = new Uint8Array(1024);
-        var myAudio = document.getElementById('music');
-
-        function selectMusic(e) {
-            musicFiles = e.target.files;
-        }
-
-        function getFreq() {
-            requestAnimationFrame(getFreq);
-            analyser.getByteFrequencyData(dataArray);
-        }
-
-        function play() {
-            if (musicFiles.length > 0) {
-                var num = Math.floor(Math.random() * musicFiles.length);
-                var musicFile = URL.createObjectURL(musicFiles[num]);
-                $("#music").attr("src", musicFile);
-            } else {
-                $("#music").attr("src", "mp3/seven.mp3");
+            window.onload = function(e) {
+                document.getElementById('music-files').addEventListener('change', selectMusic, false);
+                animateStart();
             }
 
-            document.getElementById('music').play();
-
-            audio = document.getElementById('music');
-            audioSrc = audioCtx.createMediaElementSource(audio);
-            analyser = audioCtx.createAnalyser();
-            audioSrc.connect(analyser);
-            audioSrc.connect(audioCtx.destination);
-            bufferLength = analyser.frequencyBinCount;
-            dataArray = new Uint8Array(bufferLength);
-            getFreq();
-            animate();
-        }
-
-        function isPaused(audelem) {
-            return audelem.paused;
-        }
-
-        var scene = new THREE.Scene();
-        var camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.1, 1000);
-
-        var renderer = new THREE.WebGLRenderer();
-        renderer.setSize(window.innerWidth * .99, window.innerHeight * .99);
-        document.body.appendChild(renderer.domElement);
-
-        var geometry = new THREE.BoxGeometry(1, 1, 1);
-        var material = new THREE.MeshBasicMaterial({
-            color: "#130c96"
-        });
-        var material1 = new THREE.MeshBasicMaterial({
-            color: "purple"
-        });
-        var material2 = new THREE.MeshBasicMaterial({
-            color: "rebeccapurple"
-        });
-        var material3 = new THREE.MeshBasicMaterial({
-            color: "midnightblue"
-        });
-
-        var cube = new THREE.Mesh(geometry, material);
-        var cube1 = new THREE.Mesh(geometry, material1);
-        var cube2 = new THREE.Mesh(geometry, material2);
-        var cube3 = new THREE.Mesh(geometry, material3);
-
-        scene.add(cube);
-        scene.add(cube1);
-        scene.add(cube2);
-        scene.add(cube3);
-
-        camera.position.z = 5;
-
-        function animateStart() {
-            requestAnimationFrame(animateStart);
-            cube.scale = cube1.scale = cube2.scale = cube3.scale = 1;
 
 
-            cube.rotation.x += 0.011;
-            cube.rotation.y += 0.011;
+            var musicFiles = [];
+            var audioCtx = new(window.AudioContext || window.webkitAudioContext)();
+            var audio;
+            var audioSrc;
+            var analyser;
+            var bufferLength;
+            var dataArray = new Uint8Array(1024);
+            var myAudio = document.getElementById('music');
 
-            cube1.rotation.x -= 0.011;
-            cube1.rotation.y -= 0.011;
+            function selectMusic(e) {
+                musicFiles = e.target.files;
+            }
 
-            cube2.rotation.x += 0.006;
-            cube2.rotation.y += 0.006;
+            function getFreq() {
+                requestAnimationFrame(getFreq);
+                analyser.getByteFrequencyData(dataArray);
+            }
 
-            cube3.rotation.x -= 0.006;
-            cube3.rotation.y -= 0.006;
+            function play() {
+                if (musicFiles.length > 0) {
+                    var num = Math.floor(Math.random() * musicFiles.length);
+                    var musicFile = URL.createObjectURL(musicFiles[num]);
+                    $("#music").attr("src", musicFile);
+                } else {
+                    $("#music").attr("src", "mp3/seven.mp3");
+                }
 
-            renderer.render(scene, camera);
-        }
+                document.getElementById('music').play();
 
+                audio = document.getElementById('music');
+                audioSrc = audioCtx.createMediaElementSource(audio);
+                analyser = audioCtx.createAnalyser();
+                audioSrc.connect(analyser);
+                audioSrc.connect(audioCtx.destination);
+                bufferLength = analyser.frequencyBinCount;
+                dataArray = new Uint8Array(bufferLength);
+                getFreq();
+                animate();
+            }
 
-        function animate() {
+            function isPaused(audelem) {
+                return audelem.paused;
+            }
 
-            requestAnimationFrame(animate);
+            var scene = new THREE.Scene();
+            var camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.1, 1000);
 
-            if (isPaused(myAudio)) {
+            var renderer = new THREE.WebGLRenderer();
+            renderer.setSize(window.innerWidth * .99, window.innerHeight * .99);
+            document.body.appendChild(renderer.domElement);
 
-                cube.scale.set(1, 1, 1);
-                cube1.scale.set(1, 1, 1);
-                cube2.scale.set(1, 1, 1);
-                cube3.scale.set(1, 1, 1);
+            var geometry = new THREE.BoxGeometry(1, 1, 1);
+            var material = new THREE.MeshBasicMaterial({
+                color: "#130c96"
+            });
+            var material1 = new THREE.MeshBasicMaterial({
+                color: "purple"
+            });
+            var material2 = new THREE.MeshBasicMaterial({
+                color: "rebeccapurple"
+            });
+            var material3 = new THREE.MeshBasicMaterial({
+                color: "midnightblue"
+            });
+
+            var cube = new THREE.Mesh(geometry, material);
+            var cube1 = new THREE.Mesh(geometry, material1);
+            var cube2 = new THREE.Mesh(geometry, material2);
+            var cube3 = new THREE.Mesh(geometry, material3);
+
+            scene.add(cube);
+            scene.add(cube1);
+            scene.add(cube2);
+            scene.add(cube3);
+
+            camera.position.z = 5;
+
+            function animateStart() {
+                requestAnimationFrame(animateStart);
+                cube.scale = cube1.scale = cube2.scale = cube3.scale = 1;
+
 
                 cube.rotation.x += 0.011;
                 cube.rotation.y += 0.011;
@@ -245,50 +221,76 @@
                 cube3.rotation.x -= 0.006;
                 cube3.rotation.y -= 0.006;
 
-            } else {
-
-                cube.scale.set(0.025, 0.025, 0.025);
-                cube1.scale.set(0.025, 0.025, 0.025);
-                cube2.scale.set(0.025, 0.025, 0.025);
-                cube3.scale.set(0.025, 0.025, 0.025);
-
-                for (var i = 0; i < dataArray.length; i++) {
-
-                    cube.scale.x += Math.pow(dataArray[i], 1.15) / 100000;
-                    cube.scale.y += Math.pow(dataArray[i], 1.15) / 100000;
-                    cube.scale.z += Math.pow(dataArray[i], 1.15) / 100000;
-
-                    cube1.scale.x += Math.pow(dataArray[i], 1.15) / 100000;
-                    cube1.scale.y += Math.pow(dataArray[i], 1.15) / 100000;
-                    cube1.scale.z += Math.pow(dataArray[i], 1.15) / 100000;
-
-                    cube2.scale.x += Math.pow(dataArray[i], 1.15) / 100000;
-                    cube2.scale.y += Math.pow(dataArray[i], 1.15) / 100000;
-                    cube2.scale.z += Math.pow(dataArray[i], 1.15) / 100000;
-
-                    cube3.scale.x += Math.pow(dataArray[i], 1.15) / 100000;
-                    cube3.scale.y += Math.pow(dataArray[i], 1.15) / 100000;
-                    cube3.scale.z += Math.pow(dataArray[i], 1.15) / 100000;
-                }
-
-                cube.rotation.x += 0.01;
-                cube.rotation.y += 0.01;
-
-                cube1.rotation.x -= 0.01;
-                cube1.rotation.y -= 0.01;
-
-                cube2.rotation.x += 0.005;
-                cube2.rotation.y += 0.005;
-
-                cube3.rotation.x -= 0.005;
-                cube3.rotation.y -= 0.005;
-
+                renderer.render(scene, camera);
             }
 
-            renderer.render(scene, camera);
 
-        }
-    </script>
+            function animate() {
 
+                requestAnimationFrame(animate);
+
+                if (isPaused(myAudio)) {
+
+                    cube.scale.set(1, 1, 1);
+                    cube1.scale.set(1, 1, 1);
+                    cube2.scale.set(1, 1, 1);
+                    cube3.scale.set(1, 1, 1);
+
+                    cube.rotation.x += 0.011;
+                    cube.rotation.y += 0.011;
+
+                    cube1.rotation.x -= 0.011;
+                    cube1.rotation.y -= 0.011;
+
+                    cube2.rotation.x += 0.006;
+                    cube2.rotation.y += 0.006;
+
+                    cube3.rotation.x -= 0.006;
+                    cube3.rotation.y -= 0.006;
+
+                } else {
+
+                    cube.scale.set(0.025, 0.025, 0.025);
+                    cube1.scale.set(0.025, 0.025, 0.025);
+                    cube2.scale.set(0.025, 0.025, 0.025);
+                    cube3.scale.set(0.025, 0.025, 0.025);
+
+                    for (var i = 0; i < dataArray.length; i++) {
+
+                        cube.scale.x += Math.pow(dataArray[i], 1.15) / 100000;
+                        cube.scale.y += Math.pow(dataArray[i], 1.15) / 100000;
+                        cube.scale.z += Math.pow(dataArray[i], 1.15) / 100000;
+
+                        cube1.scale.x += Math.pow(dataArray[i], 1.15) / 100000;
+                        cube1.scale.y += Math.pow(dataArray[i], 1.15) / 100000;
+                        cube1.scale.z += Math.pow(dataArray[i], 1.15) / 100000;
+
+                        cube2.scale.x += Math.pow(dataArray[i], 1.15) / 100000;
+                        cube2.scale.y += Math.pow(dataArray[i], 1.15) / 100000;
+                        cube2.scale.z += Math.pow(dataArray[i], 1.15) / 100000;
+
+                        cube3.scale.x += Math.pow(dataArray[i], 1.15) / 100000;
+                        cube3.scale.y += Math.pow(dataArray[i], 1.15) / 100000;
+                        cube3.scale.z += Math.pow(dataArray[i], 1.15) / 100000;
+                    }
+
+                    cube.rotation.x += 0.01;
+                    cube.rotation.y += 0.01;
+
+                    cube1.rotation.x -= 0.01;
+                    cube1.rotation.y -= 0.01;
+
+                    cube2.rotation.x += 0.005;
+                    cube2.rotation.y += 0.005;
+
+                    cube3.rotation.x -= 0.005;
+                    cube3.rotation.y -= 0.005;
+
+                }
+
+                renderer.render(scene, camera);
+
+            }
+        </script>
 </body>
 </html>
