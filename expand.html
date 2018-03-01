@@ -89,9 +89,7 @@
             width: 0;
         }
 
-        #header-style {
-            position: fixed;
-        }
+        
         
         #first-div {
             margin-left: 1em;
@@ -104,9 +102,18 @@
             }
             
             #sec-div {
-                 text-align: center;
+                 
+            }
+            
+            
+        }
+        
+        @media only screen and (min-width: 500px) {
+            #header-style {
+                position: fixed;
             }
         }
+        
     </style>
 
     <!-- jQuery -->
@@ -125,7 +132,7 @@
             <a id="play" onclick="play()"><span>Begin</span></a>
         </div>
 
-        <div class="col pt-2 offset-1" id="sec-div">
+        <div class="col pt-2" id="sec-div">
             <audio id="music" src="" controls controlsList="nodownload"></audio>
             <input type="file" id="music-files" multiple accept="audio/*" />
         </div>
