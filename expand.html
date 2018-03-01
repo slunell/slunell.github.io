@@ -84,7 +84,15 @@
             width: 0;
         }
         
-        
+        @media only screen and (max-width: 500px) {
+            #first-div {
+                width: 50%;
+            }
+            
+            #sec-div {
+                width: 50%;
+            }
+        }
         
     </style>
 
@@ -98,8 +106,8 @@
 
 <body style="background-color: black;">
     <div class="container-fluid">
-        <div class="row">
-            <div class="col col-md-2 pt-2 ml-4" id="first-div">
+        <div class="row" >
+            <div class="col pt-2 ml-4" id="first-div">
                 <img id="search" src="../img/search.png" onclick="document.getElementById('music-files').click();" />
                 <a id="play" onclick="play()"><span>Begin</span></a>
             </div>
