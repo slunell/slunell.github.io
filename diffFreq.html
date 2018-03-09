@@ -1,6 +1,7 @@
 <html>
 	<head>
     <meta charset=utf-8>
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
     <title>Audio Visualizer App</title>
     <style>
         body {
@@ -9,6 +10,10 @@
             width: 100%;
             /* full window width */
             text-align: center;
+        }
+
+        #body-color {
+            background-color: black;
         }
 
         canvas {
@@ -164,7 +169,7 @@
 
 </head>
 
-<body style="background-color: black;">
+<body id="body-color">
 
     <div class="container-fluid">
         <div class="row" id="header-style">
@@ -185,14 +190,14 @@
 
         </div>
     </div>
-    
+
     <script>
         var music = document.getElementById("music");
         var playhead = document.getElementById("playhead");
         var timelineWidth = $("#timeline").width();
         var duration = music.duration;
 
-        
+
 
         music.addEventListener("timeupdate", timeUpdate, false);
 
@@ -259,7 +264,6 @@
         function getPosition(el) {
             return el.getBoundingClientRect().left;
         }
-
     </script>
 
     <script src="../js/three.js"></script>
