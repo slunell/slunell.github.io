@@ -24,8 +24,8 @@
         }
 
         img {
-            width: 1.5em;
-            height: 1.5em;
+            width: 1.6em;
+            height: 1.6em;
         }
 
         audio::-webkit-media-controls-panel {
@@ -125,7 +125,7 @@
         #timeline {
             width: 100%;
             height: 3px;
-            margin-top: 30px;
+            margin-top: 29px;
             float: left;
             border-radius: 15px;
             background-color: lightgray;
@@ -140,10 +140,11 @@
         }
 
         #image {
-            width: 20px;
+            width: 18px;
             height: 20px;
             display: inline-block;
-            margin-left: 4.5em
+            margin-left: 4.5em;
+            margin-top: -2px
         }
 
     </style>
@@ -286,6 +287,15 @@
             }
 
             function play() {
+                
+                if (music.paused) {
+                    $("#image").attr("src", "img/pause.png");
+                    
+                } else {
+                    $("#image").attr("src", "img/play.png");
+            
+                }
+                
                 if (musicFiles.length > 0) {
                     var num = Math.floor(Math.random() * musicFiles.length);
                     var musicFile = URL.createObjectURL(musicFiles[num]);
@@ -293,6 +303,9 @@
                 } else {
                     $("#music").attr("src", "mp3/seven.mp3");
                 }
+                
+                
+                
 
                 document.getElementById('music').play();
 
