@@ -24,8 +24,8 @@
         }
 
         img {
-            width: 1.2em;
-            height: 1.2em;
+            width: 1.5em;
+            height: 1.5em;
         }
 
         audio::-webkit-media-controls-panel {
@@ -84,6 +84,7 @@
 
         #search {
             cursor: pointer;
+            
         }
 
         #music-files {
@@ -98,11 +99,12 @@
 
         @media only screen and (max-width: 500px) {
             #first-div {
-                text-align: center;
-                margin-left: 0em;
+                width: 50%;
             }
 
-            #sec-div {}
+            #second-div {
+                width: 50%;
+            }
 
 
         }
@@ -123,7 +125,7 @@
         #timeline {
             width: 100%;
             height: 3px;
-            margin-top: 20px;
+            margin-top: 30px;
             float: left;
             border-radius: 15px;
             background-color: lightgray;
@@ -140,7 +142,8 @@
         #image {
             width: 20px;
             height: 20px;
-            margin-bottom: 20px;
+            display: inline-block;
+            margin-left: 60px
         }
 
     </style>
@@ -156,11 +159,9 @@
 <body id="body-color">
     <div class="container-fluid">
         <div class="row" id="header-style">
-            <div class="col col-md-2 pt-2" id="first-div">
+            <div class="col pt-2" id="first-div">
                 <img id="search" src="../img/search.png" onclick="document.getElementById('music-files').click();" />
-            </div>
-
-            <div class="col pt-2" id="sec-div">
+            
                 <audio id="music"></audio>
                 <input type="file" id="music-files" multiple accept="audio/*" />
                 <img src="img/play.png" id="image" onclick="play()">
