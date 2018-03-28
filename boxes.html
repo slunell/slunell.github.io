@@ -10,10 +10,21 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
     <style>
+        body {
+            background-color: beige;
+        }
+
         #content {
-            height: 400px;
-            width: 400px;
+            height: 600px;
+            width: 600px;
             border: 1px solid black;
+            margin: auto;
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            background-color: white;
         }
 
         .box {
@@ -35,7 +46,12 @@
         .bright {
             border-left: 1px solid black;
         }
+
     </style>
+
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/color/jquery.color.plus-names-2.1.2.min.js" integrity="sha256-Wp3wC/dKYQ/dCOUD7VUXXp4neLI5t0uUEF1pg0dFnAE=" crossorigin="anonymous"></script>
 
     <title>Boxes</title>
 </head>
@@ -47,19 +63,28 @@
             $("#content").click(function(e) {
                 $(e.target).append('<div class="box tleft"></div>');
                 $(e.target).append('<div class="box tright"></div>');
-                $(e.target).append('<div class="box"></div>');
+                $(e.target).append('<div class="box bleft"></div>');
                 $(e.target).append('<div class="box bright"></div>');
+
+                var color = random_rgb();
+
+                $("#content").animate({
+                    backgroundColor: color
+                }, 400);
             });
         });
+
+        function random_rgb() {
+            var o = Math.round,
+                r = Math.random,
+                s = 255;
+            return 'rgb(' + o(r() * s) + ',' + o(r() * s) + ',' + o(r() * s) + ')';
+        }
+
     </script>
 
     <div id="content"></div>
 
-    <!-- Optional JavaScript -->
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 </body>
 
 </html>
