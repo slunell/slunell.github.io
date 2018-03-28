@@ -17,7 +17,6 @@
         #content {
             height: 600px;
             width: 600px;
-            border: 1px solid black;
             margin: auto;
             position: absolute;
             top: 0;
@@ -32,21 +31,8 @@
             height: 50%;
             display: inline-block;
             vertical-align: top;
+            top: 0;
         }
-
-        .tright {
-            border-bottom: 1px solid black;
-            border-left: 1px solid black;
-        }
-
-        .tleft {
-            border-bottom: 1px solid black;
-        }
-
-        .bright {
-            border-left: 1px solid black;
-        }
-
     </style>
 
 
@@ -68,9 +54,29 @@
 
                 var color = random_rgb();
 
-                $("#content").animate({
+                $(".tleft").animate({
                     backgroundColor: color
                 }, 400);
+
+                var color = random_rgb();
+
+                $(".tright").animate({
+                    backgroundColor: color
+                }, 400);
+
+                var color = random_rgb();
+
+                $(".bleft").animate({
+                    backgroundColor: color
+                }, 400);
+
+                var color = random_rgb();
+
+                $(".bright").animate({
+                    backgroundColor: color
+                }, 400);
+
+
             });
         });
 
@@ -80,7 +86,6 @@
                 s = 255;
             return 'rgb(' + o(r() * s) + ',' + o(r() * s) + ',' + o(r() * s) + ')';
         }
-
     </script>
 
     <div id="content"></div>
