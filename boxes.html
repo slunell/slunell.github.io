@@ -16,8 +16,6 @@
 
         #content {
             background-color: #d7e1f2;
-            height: 600px;
-            width: 600px;
             margin: auto;
             position: absolute;
             top: 0;
@@ -36,7 +34,8 @@
             display: inline-block;
             vertical-align: top;
         }
-
+        
+        
     </style>
 
 
@@ -46,15 +45,36 @@
     <title>Boxes</title>
 </head>
 
-<body>
+<body scrolling="no">
 
     <script>
         $(document).ready(function() {
+            $("#content").height(window.innerHeight * .8)
+
+            $("#content").width(window.innerHeight * .8);
+
+            $("#content").css("overflow", "hidden");
+
+            $(window).resize(function() {
+                $("#content").height(window.innerHeight * .8);
+                $("#content").width(window.innerHeight * .8);
+            }).resize();
+
             $("#content").click(function(e) {
-                $(e.target).append('<div class="box one"></div>');
-                $(e.target).append('<div class="box two"></div>');
-                $(e.target).append('<div class="box three"></div>');
-                $(e.target).append('<div class="box four"></div>');
+
+                if (e.target.offsetHeight > $("#content").height() * .07) {
+                    $(e.target).append('<div class="box one"></div>');
+                    $(e.target).append('<div class="box two"></div>');
+                    $(e.target).append('<div class="box three" style=""></div>');
+                    $(e.target).append('<div class="box four" style=""></div>');
+
+
+                } else {
+                    $(e.target).append('<div class="box one" style="height: 50%; background-color: white; vertical-align: top;"></div>');
+                    $(e.target).append('<div class="box two" style="height: 50%; background-color: white; vertical-align: top;"></div>');
+                    $(e.target).append('<div class="box three" style="height: 51%; background-color: white; vertical-align: top; margin-top: -9px;"></div>');
+                    $(e.target).append('<div class="box four" style="height: 51%; background-color: white; vertical-align: top; margin-top: -9px;"></div>');
+                }
 
                 $(".one").animate({
                     backgroundColor: random_rgb()
@@ -71,6 +91,7 @@
                 $(".four").animate({
                     backgroundColor: random_rgb()
                 }, 400);
+
             });
         });
 
@@ -80,7 +101,6 @@
                 s = 255;
             return 'rgb(' + o(r() * s) + ',' + o(r() * s) + ',' + o(r() * s) + ')';
         }
-
     </script>
 
     <div id="content"></div>
