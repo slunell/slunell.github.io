@@ -34,8 +34,6 @@
             display: inline-block;
             vertical-align: top;
         }
-        
-        
     </style>
 
 
@@ -49,15 +47,26 @@
 
     <script>
         $(document).ready(function() {
-            $("#content").height(window.innerHeight * .8)
+            var height = window.innerHeight;
+            var width = window.innerWidth;
 
-            $("#content").width(window.innerHeight * .8);
+            var length = Math.min(height, width);
+
+            $("#content").height(length * .8)
+
+            $("#content").width(length * .8);
 
             $("#content").css("overflow", "hidden");
 
             $(window).resize(function() {
-                $("#content").height(window.innerHeight * .8);
-                $("#content").width(window.innerHeight * .8);
+
+                height = window.innerHeight;
+                width = window.innerWidth;
+
+                length = Math.min(height, width);
+
+                $("#content").height(length * .8);
+                $("#content").width(length * .8);
             }).resize();
 
             $("#content").click(function(e) {
