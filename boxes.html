@@ -47,23 +47,22 @@
 
     <script>
         $(document).ready(function() {
-            var height = window.innerHeight;
             var width = window.innerWidth;
+            var height = window.innerHeight;
 
-            var length = Math.min(height, width);
+            var length = Math.min(width, height);
 
-            $("#content").height(length * .8)
-
+            $("#content").height(length * .8);
             $("#content").width(length * .8);
 
             $("#content").css("overflow", "hidden");
 
             $(window).resize(function() {
 
-                height = window.innerHeight;
-                width = window.innerWidth;
+                var width = window.innerWidth;
+                var height = window.innerHeight;
 
-                length = Math.min(height, width);
+                var length = Math.min(width, height);
 
                 $("#content").height(length * .8);
                 $("#content").width(length * .8);
@@ -71,7 +70,12 @@
 
             $("#content").click(function(e) {
 
-                if (e.target.offsetHeight > $("#content").height() * .07) {
+                if (e.target.offsetHeight < $("#content").height() * .13 && window.innerWidth < 500) {
+                    $(e.target).append('<div class="box one" style="height: 50%; background-color: white; vertical-align: top;"></div>');
+                    $(e.target).append('<div class="box two" style="height: 50%; background-color: white; vertical-align: top;"></div>');
+                    $(e.target).append('<div class="box three" style="height: 51%; background-color: white; vertical-align: top; margin-top: -6px;"></div>');
+                    $(e.target).append('<div class="box four" style="height: 51%; background-color: white; vertical-align: top; margin-top: -6px;"></div>');
+                } else if (e.target.offsetHeight > $("#content").height() * .07) {
                     $(e.target).append('<div class="box one"></div>');
                     $(e.target).append('<div class="box two"></div>');
                     $(e.target).append('<div class="box three" style=""></div>');
@@ -79,10 +83,13 @@
 
 
                 } else {
+
                     $(e.target).append('<div class="box one" style="height: 50%; background-color: white; vertical-align: top;"></div>');
                     $(e.target).append('<div class="box two" style="height: 50%; background-color: white; vertical-align: top;"></div>');
                     $(e.target).append('<div class="box three" style="height: 51%; background-color: white; vertical-align: top; margin-top: -9px;"></div>');
                     $(e.target).append('<div class="box four" style="height: 51%; background-color: white; vertical-align: top; margin-top: -9px;"></div>');
+
+
                 }
 
                 $(".one").animate({
