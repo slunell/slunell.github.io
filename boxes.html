@@ -78,7 +78,14 @@
 
             $("#content").click(function(e) {
 
-                if (e.target.offsetHeight < $("#content").height() * .13 && window.innerWidth < 500) {
+                if (e.target.offsetHeight < $("#content").height() * .30 && e.target.offsetHeight > $("#content").height() * .13 && window.innerWidth < 500) {
+
+                    $(e.target).append('<div class="box one"></div>');
+                    $(e.target).append('<div class="box two"></div>');
+                    $(e.target).append('<div class="box three" style="margin-top: -1px"></div>');
+                    $(e.target).append('<div class="box four" style="margin-top: -1px"></div>');
+
+                } else if (e.target.offsetHeight < $("#content").height() * .13 && window.innerWidth < 500) {
                     if (e.target.offsetHeight > $("#content").height() * .07) {
                         $(e.target).append('<div class="box one" style="height: 51%; background-color: white; vertical-align: top;"></div>');
                         $(e.target).append('<div class="box two" style="height: 50%; background-color: white; vertical-align: top;"></div>');
