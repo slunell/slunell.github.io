@@ -33,6 +33,10 @@
             overflow: hidden;
         }
 
+        #container:hover {
+            cursor: pointer;
+        }
+
         .box {
             display: flex;
             flex-grow: 0;
@@ -62,7 +66,7 @@
     <script>
         $(document).ready(function() {
 
-            $("body").click(function(e) {
+            $("body").on("click touchstart", function(e) {
                 if (!e.target.matches('.box')) {
                     return;
                 }
