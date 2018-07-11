@@ -13,12 +13,12 @@
         svg {
             display: block;
             margin: 0 auto;
+            padding-top: 30px;
         }
 
         body {
             background-color: black;
         }
-
     </style>
 </head>
 
@@ -70,7 +70,7 @@
                             change += .0001;
                         }
 
-                        return (200 + change + Math.cos(a * 8 - i * 2 * Math.PI / 3 + t) * Math.pow((1 + Math.cos(a - t)) / 2, 3) * 32);
+                        return (150 + change + Math.cos(a * 8 - i * 2 * Math.PI / 3 + t) * Math.pow((1 + Math.cos(a - t)) / 2, 3) * 32);
                     });
 
             });
@@ -81,7 +81,6 @@
                 return d(angles);
             });
         });
-
     </script>
 
 </body>
