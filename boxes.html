@@ -6,108 +6,86 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-
-    <style>
-        body {
-            background-color: black;
-        }
-
-        #content {
-            background-color: #d7e1f2;
-            margin: auto;
-            position: absolute;
-            top: 0;
-            right: 0;
-            bottom: 0;
-            left: 0;
-        }
-
-        #content:hover {
-            cursor: pointer;
-        }
-
-        .box {
-            width: 50%;
-            height: 50%;
-            display: inline-block;
-            vertical-align: top;
-        }
-
-        .one {}
-
-        .two {}
-
-        .three {}
-
-        .four {}
-    </style>
-
+    <title>Boxes</title>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="https://code.jquery.com/color/jquery.color.plus-names-2.1.2.min.js" integrity="sha256-Wp3wC/dKYQ/dCOUD7VUXXp4neLI5t0uUEF1pg0dFnAE=" crossorigin="anonymous"></script>
 
-    <title>Boxes</title>
+    <style>
+        *,
+        *:before,
+        *:after {
+            box-sizing: border-box;
+        }
+
+        #outer-container {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+        }
+
+        #container {
+            width: 50%;
+            height: 50%;
+            margin: 0 auto;
+            background-color: #d7e1f2;
+            overflow: hidden;
+        }
+
+        #container:hover {
+            cursor: pointer;
+        }
+
+        .box {
+            display: flex;
+            flex-grow: 0;
+            flex-shrink: 0;
+            width: 50%;
+            height: 50%;
+            flex-wrap: wrap;
+        }
+
+        html {
+            height: 100%;
+        }
+
+        body {
+            height: 100%;
+            background-color: black;
+        }
+    </style>
 </head>
 
 <body scrolling="no">
 
+    <div id="outer-container">
+        <div id="container" class="box"></div>
+    </div>
+
     <script>
         $(document).ready(function() {
-            var width = window.innerWidth;
-            var height = window.innerHeight;
 
-            var length = Math.min(width, height);
-
-            $("#content").height(length * .8);
-            $("#content").width(length * .8);
-
-            $("#content").css("overflow", "hidden");
-
-            $(window).resize(function() {
-
-                var width = window.innerWidth;
-                var height = window.innerHeight;
-
-                var length = Math.min(width, height);
-
-                $("#content").height(length * .8);
-                $("#content").width(length * .8);
-            }).resize();
-
-            $("#content").click(function(e) {
-
-                if (e.target.offsetHeight < $("#content").height() * .30 && e.target.offsetHeight > $("#content").height() * .13 && window.innerWidth < 500) {
-
-                    $(e.target).append('<div class="box one"></div>');
-                    $(e.target).append('<div class="box two"></div>');
-                    $(e.target).append('<div class="box three" style="height: 51%; margin-top: 0px"></div>');
-                    $(e.target).append('<div class="box four" style="height: 51%; margin-top: 0px"></div>');
-
-                } else if (e.target.offsetHeight < $("#content").height() * .13 && window.innerWidth < 500) {
-                    if (e.target.offsetHeight > $("#content").height() * .07) {
-                        $(e.target).append('<div class="box one" style="height: 51%; background-color: white; vertical-align: top;"></div>');
-                        $(e.target).append('<div class="box two" style="height: 50%; background-color: white; vertical-align: top;"></div>');
-                        $(e.target).append('<div class="box three" style="height: 51%; background-color: white; vertical-align: top; margin-top: -5px;"></div>');
-                        $(e.target).append('<div class="box four" style="height: 51%; background-color: white; vertical-align: top; margin-top: -5px;"></div>');
-                    }
-                } else if (e.target.offsetHeight > $("#content").height() * .07) {
-                    $(e.target).append('<div class="box one"></div>');
-                    $(e.target).append('<div class="box two"></div>');
-                    $(e.target).append('<div class="box three" style=""></div>');
-                    $(e.target).append('<div class="box four" style=""></div>');
-
-
-                } else {
-
-                    $(e.target).append('<div class="box one" style="height: 51%; background-color: white; vertical-align: top;"></div>');
-                    $(e.target).append('<div class="box two" style="height: 51%; background-color: white; vertical-align: top;"></div>');
-                    $(e.target).append('<div class="box three" style="height: 52%; background-color: white; vertical-align: top; margin-top: -8px;"></div>')
-                    $(e.target).append('<div class="box four" style="height: 52%; background-color: white; vertical-align: top; margin-top: -8px;"></div>');
-
-
+            $("#outer-container").on("click", function(e) {
+                if (!e.target.matches('.box')) {
+                    return;
                 }
+
+                var node = document.createElement('div');
+                node.className = "box one";
+                e.target.appendChild(node);
+
+                node = document.createElement('div');
+                node.className = "box two";
+                e.target.appendChild(node);
+
+                node = document.createElement('div');
+                node.className = "box three";
+                e.target.appendChild(node);
+
+                node = document.createElement('div');
+                node.className = "box four";
+                e.target.appendChild(node);
 
                 $(".one").animate({
                     backgroundColor: random_rgb()
@@ -125,7 +103,29 @@
                     backgroundColor: random_rgb()
                 }, 400);
 
+
             });
+
+            var width = window.innerWidth;
+            var height = window.innerHeight;
+
+            var length = Math.min(width, height);
+
+            $("#container").height(length * .8);
+            $("#container").width(length * .8);
+
+            $(window).resize(function() {
+
+                var width = window.innerWidth;
+                var height = window.innerHeight;
+
+                var length = Math.min(width, height);
+
+                $("#container").height(length * .8);
+                $("#container").width(length * .8);
+            }).resize();
+
+
         });
 
         function random_rgb() {
@@ -136,7 +136,7 @@
         }
     </script>
 
-    <div id="content"></div>
+
 
 </body>
 
