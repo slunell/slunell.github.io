@@ -61,7 +61,8 @@
 
     <script>
         $(document).ready(function() {
-            document.querySelector('body').addEventListener('click', (e) => {
+
+            $("body").click(function(e) {
                 if (!e.target.matches('.box')) {
                     return;
                 }
