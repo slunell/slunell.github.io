@@ -54,6 +54,7 @@
             height: 100%;
             background-color: black;
         }
+
     </style>
 </head>
 
@@ -85,7 +86,7 @@
                 $("#container").width(length * .8);
             }).resize();
 
-            $("#outer-container").click(function(e) {
+            $("#outer-container").on("click", function(e) {
                 if (!e.target.matches('.box')) {
                     return;
                 }
@@ -136,6 +137,7 @@
                 s = 255;
             return 'rgb(' + o(r() * s) + ',' + o(r() * s) + ',' + o(r() * s) + ')';
         }
+
     </script>
 
 
