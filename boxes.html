@@ -54,7 +54,6 @@
             height: 100%;
             background-color: black;
         }
-
     </style>
 </head>
 
@@ -66,6 +65,25 @@
 
     <script>
         $(document).ready(function() {
+
+            var width = window.innerWidth;
+            var height = window.innerHeight;
+
+            var length = Math.min(width, height);
+
+            $("#container").height(length * .8);
+            $("#container").width(length * .8);
+
+            $(window).resize(function() {
+
+                var width = window.innerWidth;
+                var height = window.innerHeight;
+
+                var length = Math.min(width, height);
+
+                $("#container").height(length * .8);
+                $("#container").width(length * .8);
+            }).resize();
 
             $("#outer-container").click(function(e) {
                 if (!e.target.matches('.box')) {
@@ -107,24 +125,7 @@
 
             });
 
-            var width = window.innerWidth;
-            var height = window.innerHeight;
 
-            var length = Math.min(width, height);
-
-            $("#container").height(length * .8);
-            $("#container").width(length * .8);
-
-            $(window).resize(function() {
-
-                var width = window.innerWidth;
-                var height = window.innerHeight;
-
-                var length = Math.min(width, height);
-
-                $("#container").height(length * .8);
-                $("#container").width(length * .8);
-            }).resize();
 
 
         });
@@ -135,7 +136,6 @@
                 s = 255;
             return 'rgb(' + o(r() * s) + ',' + o(r() * s) + ',' + o(r() * s) + ')';
         }
-
     </script>
 
 
