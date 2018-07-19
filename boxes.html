@@ -38,9 +38,11 @@
         }
 
         .box {
-            float: left;
+            display: flex;
+            flex-grow: 0;
+            flex-shrink: 0;
             width: 50%;
-            height: 50%;
+            height: 50%; flex-wrap: wrap;
         }
 
         html {
@@ -51,6 +53,7 @@
             height: 100%;
             background-color: black;
         }
+
     </style>
 </head>
 
@@ -133,6 +136,7 @@
                 s = 255;
             return 'rgb(' + o(r() * s) + ',' + o(r() * s) + ',' + o(r() * s) + ')';
         }
+
     </script>
 
 
