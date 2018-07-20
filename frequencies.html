@@ -21,11 +21,7 @@
             height: 100%;
         }
 
-        @media only screen and (max-width: 500px) {
-            canvas {
-                width: 30%;
-            }
-        }
+
 
         img {
             width: 1.5em;
@@ -274,8 +270,10 @@
 
     <script>
         var ratio = window.innerHeight / window.innerWidth;
+
         window.addEventListener('resize', function() {
             renderer.setSize(window.innerWidth * .99, window.innerWidth * ratio * .99);
+            console.log(window.innerWidth);
         });
 
         window.onload = function(e) {
@@ -336,6 +334,7 @@
         var camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.1, 1000);
 
         var renderer = new THREE.WebGLRenderer();
+        console.log(window.innerWidth);
         renderer.setSize(window.innerWidth * .99, window.innerHeight * .99);
         document.body.appendChild(renderer.domElement);
 
@@ -364,8 +363,14 @@
         var cube4 = new THREE.Mesh(geometry, material4);
 
         cube.position.set(2, 0, 0);
-        cube1.position.set(1, 0, 0);
-        cube2.position.set(-1, 0, 0);
+        if (window.innerWidth < 600) {
+            cube1.position.set(.6, 0, 0);
+            cube2.position.set(-.6, 0, 0);
+        } else {
+            cube1.position.set(1, 0, 0);
+            cube2.position.set(-1, 0, 0);
+        }
+
         cube3.position.set(-2, 0, 0);
 
         scene.add(cube3);
