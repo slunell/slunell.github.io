@@ -392,8 +392,14 @@
         var wireframe4 = new THREE.LineSegments(geo, mat);
 
         wireframe.position.set(1, 0, 0);
-        wireframe1.position.set(2, 0, 0);
-        wireframe2.position.set(-1, 0, 0);
+        if (window.innerWidth < 600) {
+            wireframe1.position.set(.7, 0, 0);
+            wireframe2.position.set(-.7, 0, 0);
+        } else {
+            wireframe1.position.set(1, 0, 0);
+            wireframe2.position.set(-1, 0, 0);
+        }
+
         wireframe3.position.set(-2, 0, 0);
 
         scene.add(wireframe);
