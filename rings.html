@@ -51,11 +51,8 @@
         <svg></svg>
     </div>
 
-
-
     <script src="https://d3js.org/d3.v4.min.js"></script>
     <script>
-        var cfcnt = 1;
         var change = 0;
         var timer = 0;
 
@@ -70,12 +67,12 @@
             .attr("stroke-width", 10)
             .attr("stroke-linejoin", "round")
             .selectAll("path")
-            .data(["cyan", "magenta", "yellow"])
+            .data(["#00E5FF", "#F7FF00", "#FF0073"])
             .enter().append("path")
             .attr("stroke", function(d) {
                 return d;
             })
-            .style("mix-blend-mode", "luminosity")
+            .style("mix-blend-mode", "lighten")
 
             .datum(function(d, i) {
                 return d3.radialLine()
