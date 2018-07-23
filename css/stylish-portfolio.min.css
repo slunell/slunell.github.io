@@ -27,21 +27,21 @@ body {
 }
 
 .fade-in {
-	opacity: 0;
-	animation-name: fadeInOpacity;
-	animation-iteration-count: 1;
-	animation-timing-function: ease-in;
-	animation-duration: 2s;
+    opacity: 0;
+    animation-name: fadeInOpacity;
+    animation-iteration-count: 1;
+    animation-timing-function: ease-in;
+    animation-duration: 2s;
     font-size: 6rem;
 }
 
 @keyframes fadeInOpacity {
-	0% {
-		opacity: 0;
-	}
-	100% {
-		opacity: 1;
-	}
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
 }
 
 @font-face {
@@ -398,33 +398,33 @@ a:hover {
 }
 
 .btn-primary {
-    background-color: #1d809f!important;
-    border-color: #1d809f!important;
-    color: #fff!important
+    background-color: #1d809f !important;
+    border-color: #1d809f !important;
+    color: #fff !important
 }
 
 .btn-primary:active,
 .btn-primary:focus,
 .btn-primary:hover {
-    background-color: #155d74!important;
-    border-color: #155d74!important
+    background-color: #155d74 !important;
+    border-color: #155d74 !important
 }
 
 .btn-secondary {
-    background-color: #ecb807!important;
-    border-color: #ecb807!important;
-    color: #fff!important
+    background-color: #ecb807 !important;
+    border-color: #ecb807 !important;
+    color: #fff !important
 }
 
 .btn-secondary:active,
 .btn-secondary:focus,
 .btn-secondary:hover {
-    background-color: #ba9106!important;
-    border-color: #ba9106!important
+    background-color: #ba9106 !important;
+    border-color: #ba9106 !important
 }
 
 .btn-dark {
-    color: #fff!important
+    color: #fff !important
 }
 
 .btn {
@@ -433,15 +433,15 @@ a:hover {
 }
 
 .bg-primary {
-    background-color: #1d809f!important
+    background-color: #1d809f !important
 }
 
 .text-primary {
-    color: #1d809f!important
+    color: #1d809f !important
 }
 
 .text-secondary {
-    color: #ecb807!important
+    color: #ecb807 !important
 }
 
 .tags {
@@ -450,15 +450,15 @@ a:hover {
     border: 1px solid #A9A9A9;
     text-align: center;
     border-radius: 0.5em;
-    color: #B0B0B0;
+    color: rgb(160, 160, 160);
     padding-left: .4em;
-    padding-right: .4em;
-    padding-bottom: .05em;
+    padding-right: .42em;
+    padding-bottom: .06em;
     margin-right: 0.1em;
-    
+
 }
 
-.tagbreak{
+.tagbreak {
     margin-top: -.5em;
 }
 
@@ -466,7 +466,7 @@ a:hover {
     margin: 0 auto;
     margin-left: 0.7em;
     margin-bottom: 0.7em;
-    
+
 }
 
 #longtags {
