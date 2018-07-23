@@ -4,6 +4,7 @@
 <head>
     <meta charset=utf-8>
     <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <link rel="shortcut icon" type="image/x-icon" href="img/sl_icon.ico" />
     <title>Audio Visualizer App</title>
     <style>
         body {
@@ -84,7 +85,7 @@
 
         #search {
             cursor: pointer;
-            
+
         }
 
         #music-files {
@@ -111,7 +112,7 @@
             #header-style {
                 position: fixed;
             }
-            
+
             #image {
                 margin-left: 4.5em;
             }
@@ -147,7 +148,6 @@
             display: inline-block;
             margin-top: -2px
         }
-
     </style>
 
     <!-- jQuery -->
@@ -163,7 +163,7 @@
         <div class="row" id="header-style">
             <div class="col pt-2" id="first-div">
                 <img id="search" src="../img/search.png" onclick="document.getElementById('music-files').click();" />
-            
+
                 <audio id="music"></audio>
                 <input type="file" id="music-files" multiple accept="audio/*" />
                 <img src="img/play.png" id="image" onclick="play()">
@@ -184,7 +184,7 @@
         var timelineWidth = $("#timeline").width();
         var duration = music.duration;
 
-        
+
 
         music.addEventListener("timeupdate", timeUpdate, false);
 
@@ -251,7 +251,6 @@
         function getPosition(el) {
             return el.getBoundingClientRect().left;
         }
-
     </script>
     <script src="../js/three.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
@@ -288,16 +287,16 @@
             }
 
             function play() {
-                
+
                 if (music.paused) {
                     $("#image").attr("src", "img/pause.png");
-                    
+
                 } else {
                     $("#image").attr("src", "img/play.png");
                     music.pause();
                     return;
                 }
-                
+
                 if (musicFiles.length > 0) {
                     var num = Math.floor(Math.random() * musicFiles.length);
                     var musicFile = URL.createObjectURL(musicFiles[num]);
@@ -305,9 +304,9 @@
                 } else {
                     $("#music").attr("src", "mp3/seven.mp3");
                 }
-                
-                
-                
+
+
+
 
                 document.getElementById('music').play();
 
@@ -446,7 +445,6 @@
                 renderer.render(scene, camera);
 
             }
-
         </script>
     </div>
 </body>
