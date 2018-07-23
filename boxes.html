@@ -8,6 +8,8 @@
 
     <title>Boxes</title>
 
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="https://code.jquery.com/color/jquery.color.plus-names-2.1.2.min.js" integrity="sha256-Wp3wC/dKYQ/dCOUD7VUXXp4neLI5t0uUEF1pg0dFnAE=" crossorigin="anonymous"></script>
 
@@ -54,15 +56,12 @@
             height: 100%;
             background-color: black;
         }
-
     </style>
 </head>
 
 <body scrolling="no">
 
-    <div id="outer-container">
-        <div id="container" class="box"></div>
-    </div>
+
 
     <script>
         $(document).ready(function() {
@@ -72,8 +71,8 @@
 
             var length = Math.min(width, height);
 
-            $("#container").height(length * .8);
-            $("#container").width(length * .8);
+            $("#container").height(length * .7);
+            $("#container").width(length * .7);
 
             $(window).resize(function() {
 
@@ -82,8 +81,9 @@
 
                 var length = Math.min(width, height);
 
-                $("#container").height(length * .8);
-                $("#container").width(length * .8);
+                $("#container").height(length * .7);
+                $("#container").width(length * .7);
+
             }).resize();
 
             $("#outer-container").on("click", function(e) {
@@ -91,21 +91,10 @@
                     return;
                 }
 
-                var node = document.createElement('div');
-                node.className = "box one";
-                e.target.appendChild(node);
-
-                node = document.createElement('div');
-                node.className = "box two";
-                e.target.appendChild(node);
-
-                node = document.createElement('div');
-                node.className = "box three";
-                e.target.appendChild(node);
-
-                node = document.createElement('div');
-                node.className = "box four";
-                e.target.appendChild(node);
+                $(e.target).append('<div class="box one"></div>');
+                $(e.target).append('<div class="box two"></div>');
+                $(e.target).append('<div class="box three"></div>');
+                $(e.target).append('<div class="box four"></div>');
 
                 $(".one").animate({
                     backgroundColor: random_rgb()
@@ -133,10 +122,11 @@
                 s = 255;
             return 'rgb(' + o(r() * s) + ',' + o(r() * s) + ',' + o(r() * s) + ')';
         }
-
     </script>
 
-
+    <div id="outer-container">
+        <div id="container" class="box"></div>
+    </div>
 
 </body>
 
