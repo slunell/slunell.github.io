@@ -94,6 +94,8 @@
                             change += .0001;
                         }
                         var w = window.innerWidth;
+
+                        var overallChange = (w < 600) ? change + 100 : change + 150;
                         if (w < 600) {
                             return (100 + change + Math.cos(a * 8 - i * 2 * Math.PI / 3 + t) * Math.pow((1 + Math.cos(a - t)) / 2.5, 3) * 32);
                         }
