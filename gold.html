@@ -1,0 +1,436 @@
+<!-- transition a rainbow coming out of pot after winning -->
+
+<!DOCTYPE html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+<style>
+    .active {
+        stroke: #000;
+        stroke-width: 2px;
+    }
+
+    .coin:hover {
+        cursor: pointer;
+    }
+
+    svg {
+        border: 1px solid grey;
+        box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
+        margin: 0 auto;
+        display: block;
+        background: white;
+    }
+
+    body {
+        background: beige;
+    }
+
+</style>
+<svg width="960" height="500"></svg>
+<script src="//d3js.org/d3.v4.min.js"></script>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+
+<script>
+    var svg = d3.select("svg"),
+        width = +svg.attr("width"),
+        height = +svg.attr("height"),
+        coin_radius = 10,
+        pot_radius = 50,
+        score = 0;
+
+    var pot_cx = Math.floor(Math.random() * (width - pot_radius * 2) + pot_radius),
+        pot_cy = Math.floor(Math.random() * (height - pot_radius * 2) + pot_radius);
+
+    var circles = d3.range(5).map(function() {
+
+        var coin_cx = Math.floor(Math.random() * (width - coin_radius * 2) + coin_radius),
+            coin_cy = Math.floor(Math.random() * (height - coin_radius * 2) + coin_radius);
+
+        var retry = reinitializePlacement(coin_cx, coin_cy);
+
+        while (retry) {
+            coin_cx = Math.floor(Math.random() * (width - coin_radius * 2) + coin_radius);
+            coin_cy = Math.floor(Math.random() * (height - coin_radius * 2) + coin_radius);
+
+            retry = reinitializePlacement(coin_cx, coin_cy);
+        }
+
+
+        return {
+            x: coin_cx,
+            y: coin_cy
+        };
+    });
+
+    var arc = d3.arc()
+        .innerRadius(170)
+        .outerRadius(240)
+        .startAngle(Math.PI * -.5);
+
+    var arc2 = d3.arc()
+        .innerRadius(180)
+        .outerRadius(190)
+        .startAngle(Math.PI * -.5);
+
+    var arc3 = d3.arc()
+        .innerRadius(190)
+        .outerRadius(200)
+        .startAngle(Math.PI * -.5);
+
+    var arc4 = d3.arc()
+        .innerRadius(200)
+        .outerRadius(210)
+        .startAngle(Math.PI * -.5);
+    var arc5 = d3.arc()
+        .innerRadius(210)
+        .outerRadius(220)
+        .startAngle(Math.PI * -.5);
+
+    var arc6 = d3.arc()
+        .innerRadius(220)
+        .outerRadius(230)
+        .startAngle(Math.PI * -.5);
+
+    var arc7 = d3.arc()
+        .innerRadius(230)
+        .outerRadius(240)
+        .startAngle(Math.PI * -.5);
+
+    var g = svg.append("g")
+        .attr("transform", "translate(" + (width / 2 + 200) + "," + height / 2 + ")")
+
+
+
+    g.append('path')
+        .datum({
+            endAngle: Math.PI / 2
+        })
+        .attr('d', arc)
+        .attr('id', 'violet')
+        .style('fill', 'white')
+
+    g.append('path')
+        .datum({
+            endAngle: Math.PI / 2
+        })
+        .attr('d', arc2)
+        .attr('id', 'indigo')
+        .style('fill', 'white')
+
+    g.append('path')
+        .datum({
+            endAngle: Math.PI / 2
+        })
+        .attr('d', arc3)
+        .attr('id', 'blue')
+        .style('fill', 'white')
+
+    g.append('path')
+        .datum({
+            endAngle: Math.PI / 2
+        })
+        .attr('d', arc4)
+        .attr('id', 'green')
+        .style('fill', 'white')
+
+    g.append('path')
+        .datum({
+            endAngle: Math.PI / 2
+        })
+        .attr('d', arc5)
+        .attr('id', 'yellow')
+        .style('fill', 'white')
+        .transition()
+
+    g.append('path')
+        .datum({
+            endAngle: Math.PI / 2
+        })
+        .attr('d', arc6)
+        .attr('id', 'orange')
+        .style('fill', 'white')
+
+    g.append('path')
+        .datum({
+            endAngle: Math.PI / 2
+        })
+        .attr('d', arc7)
+        .attr('id', 'red')
+        .style('fill', 'white')
+
+
+    var color = d3.scaleOrdinal()
+        .range(d3.schemeCategory20);
+
+    svg.selectAll("circle")
+        .data(circles)
+        .enter().append("circle")
+        .attr("cx", function(d) {
+            return d.x;
+        })
+        .attr("cy", function(d) {
+            return d.y;
+        })
+        .attr("r", coin_radius)
+        .attr("class", "coin")
+        .style("fill", "gold")
+        .style("stroke", "black")
+        .call(d3.drag()
+            .on("start", dragstarted)
+            .on("drag", dragged)
+            .on("end", dragended));
+
+    svg.append('circle')
+        .attr('cx', pot_cx)
+        .attr('cy', pot_cy)
+        .attr('r', '50')
+        .attr('id', 'pot')
+        .style("fill", "#4f5154")
+        .style('stroke', 'black')
+
+    svg.append('ellipse')
+        .attr('cx', pot_cx)
+        .attr('cy', pot_cy - 40)
+        .attr('rx', '50')
+        .attr('ry', '10')
+        .attr('id', 'rim')
+        .style('fill', '#4f5154')
+        .style('stroke', 'black')
+
+    svg.append('ellipse')
+        .attr('cx', pot_cx)
+        .attr('cy', pot_cy - 35)
+        .attr('rx', '34')
+        .attr('ry', '3')
+        .attr('id', 'hole')
+        .style('fill', 'black')
+
+    //createRainbow()
+
+    function dragstarted(d) {
+        d3.select(this).raise().classed("active", true);
+    }
+
+    function dragged(d) {
+        d3.select(this).attr("cx", d.x = d3.event.x).attr("cy", d.y = d3.event.y);
+    }
+
+    function dragended(d) {
+        d3.select(this).classed("active", false);
+        if (isItIn(d.x, d.y)) {
+            d3.select(this).style('display', 'none')
+            score++;
+        }
+        //console.log(score)
+
+        if (score == 5) createRainbow();
+    }
+
+    function reinitializePlacement(coin_cx, coin_cy) {
+        var d = Math.sqrt(Math.pow(coin_cx - pot_cx, 2) + Math.pow(coin_cy - pot_cy, 2));
+        return (pot_radius > (d + coin_radius - 50)) ? true : false;
+    }
+
+    function isItIn(x, y) {
+        var d = Math.sqrt(Math.pow(x - pot_cx, 2) + Math.pow(y - pot_cy, 2));
+        return (pot_radius > (d + coin_radius)) ? true : false;
+    }
+
+    function createRainbow() {
+
+        pot_cx = width / 2
+        pot_cy = height / 2
+
+        g = svg.append("g")
+            .attr("transform", "translate(" + (pot_cx + 200) + "," + pot_cy + ")")
+
+        svg.select('#pot')
+            .transition()
+            .duration(750)
+            .attr("cx", pot_cx)
+            .attr("cy", pot_cy)
+
+        svg.select('#rim')
+            .transition()
+            .duration(750)
+            .attr('cx', pot_cx)
+            .attr('cy', pot_cy - 40)
+
+        svg.select('#hole')
+            .transition()
+            .duration(750)
+            .attr('cx', pot_cx)
+            .attr('cy', pot_cy - 35)
+
+        d3.timeout(function() {
+
+
+
+            svg.select("#red")
+                .transition()
+                .duration(750)
+                .style('fill', 'red')
+
+            svg.select("#orange")
+                .transition()
+                .duration(750)
+                .style('fill', 'orange')
+
+            svg.select("#yellow")
+                .transition()
+                .duration(750)
+                .style('fill', 'yellow')
+
+            svg.select("#green")
+                .transition()
+                .duration(750)
+                .style('fill', 'green')
+
+            svg.select("#blue")
+                .transition()
+                .duration(750)
+                .style('fill', 'blue')
+
+            svg.select("#indigo")
+                .transition()
+                .duration(750)
+                .style('fill', 'indigo')
+
+            svg.select("#violet")
+                .transition()
+                .duration(750)
+                .style('fill', '#db0ad7')
+
+
+            svg.append('circle')
+                .attr("cx", pot_cx + 33)
+                .attr("cy", pot_cy - 44)
+                .attr("r", coin_radius)
+                .attr("class", "coin")
+                .style("fill", "gold")
+                .style("stroke", "black")
+                .style('opacity', 0)
+                .transition()
+                .duration(750)
+                .style('opacity', 1)
+
+
+
+            svg.append('circle')
+                .attr("cx", pot_cx + 10)
+                .attr("cy", pot_cy - 53)
+                .attr("r", coin_radius)
+                .attr("class", "coin")
+                .style("fill", "gold")
+                .style("stroke", "black")
+                .style('opacity', 0)
+                .transition()
+                .duration(750)
+                .style('opacity', 1)
+
+            svg.append('circle')
+                .attr("cx", pot_cx - 23)
+                .attr("cy", pot_cy - 48)
+                .attr("r", coin_radius)
+                .attr("class", "coin")
+                .style("fill", "gold")
+                .style("stroke", "black")
+                .style('opacity', 0)
+                .transition()
+                .duration(750)
+                .style('opacity', 1)
+
+            svg.append('circle')
+                .attr("cx", pot_cx - 33)
+                .attr("cy", pot_cy - 44)
+                .attr("r", coin_radius)
+                .attr("class", "coin")
+                .style("fill", "gold")
+                .style("stroke", "black")
+                .style('opacity', 0)
+                .transition()
+                .duration(750)
+                .style('opacity', 1)
+
+            svg.append('circle')
+                .attr("cx", pot_cx + 23)
+                .attr("cy", pot_cy - 48)
+                .attr("r", coin_radius)
+                .attr("class", "coin")
+                .style("fill", "gold")
+                .style("stroke", "black")
+                .style('opacity', 0)
+                .transition()
+                .duration(750)
+                .style('opacity', 1)
+
+            svg.append('circle')
+                .attr("cx", pot_cx - 4)
+                .attr("cy", pot_cy - 48)
+                .attr("r", coin_radius)
+                .attr("class", "coin")
+                .style("fill", "gold")
+                .style("stroke", "black")
+                .style('opacity', 0)
+                .transition()
+                .duration(750)
+                .style('opacity', 1)
+
+            svg.append('circle')
+                .attr("cx", pot_cx + 23)
+                .attr("cy", pot_cy - 42)
+                .attr("r", coin_radius)
+                .attr("class", "coin")
+                .style("fill", "gold")
+                .style("stroke", "black")
+                .style('opacity', 0)
+                .transition()
+                .duration(750)
+                .style('opacity', 1)
+
+            svg.append('circle')
+                .attr("cx", pot_cx + 10)
+                .attr("cy", pot_cy - 44)
+                .attr("r", coin_radius)
+                .attr("class", "coin")
+                .style("fill", "gold")
+                .style("stroke", "black")
+                .style('opacity', 0)
+                .transition()
+                .duration(750)
+                .style('opacity', 1)
+
+            svg.append('circle')
+                .attr("cx", pot_cx - 17)
+                .attr("cy", pot_cy - 42)
+                .attr("r", coin_radius)
+                .attr("class", "coin")
+                .style("fill", "gold")
+                .style("stroke", "black")
+                .style('opacity', 0)
+                .transition()
+                .duration(750)
+                .style('opacity', 1)
+
+            svg.append('circle')
+                .attr("cx", pot_cx)
+                .attr("cy", pot_cy - 40)
+                .attr("r", coin_radius)
+                .attr("class", "coin")
+                .style("fill", "gold")
+                .style("stroke", "black")
+                .style('opacity', 0)
+                .transition()
+                .duration(750)
+                .style('opacity', 1)
+        }, 750);
+
+
+
+
+
+
+
+    }
+
+</script>
