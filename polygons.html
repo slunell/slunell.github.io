@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset=utf-8>
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <title>Polygons</title>
+
+    <script src="../js/three.js"></script>
+    <script src="js/OrbitControls.js"></script>
+    <style>
+        #main {
+            overflow: hidden;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="main"></div>
+
+    <script>
+        var WIDTH = window.innerWidth;
+        var HEIGHT = window.innerHeight;
+        var ASPECT = WIDTH / HEIGHT;
+
+        var scene, camera, renderer, controls;
+        var polygons = [];
+
+
+
+
+        function init() {
+            // create a WebGL renderer inside an existing dom element (id=main)
+            renderer = new THREE.WebGLRenderer();
+            renderer.setClearColor(new THREE.Color('white'));
+            renderer.setSize(WIDTH, HEIGHT);
+
+            document.getElementById("main").appendChild(renderer.domElement);
+
+            scene = new THREE.Scene();
+
+            // Add light
+            var pointLight = new THREE.PointLight(0xFFFFFF);
+            pointLight.position.x = 10;
+            pointLight.position.y = 50;
+            pointLight.position.z = 130;
+
+            scene.add(pointLight);
+
+
+            // Add camera
+            camera = new THREE.PerspectiveCamera(45, ASPECT, 1, 10000);
+            scene.add(camera);
+            // the camera starts at 0,0,0, so pull it back
+            camera.position.z = 30;
+
+            controls = new THREE.OrbitControls(camera, renderer.domElement);
+
+            // Main part of the code
+            var polygon = createHutParts();
+            polygons.push(polygon);
+
+            polygon = createHutParts();
+            polygon.position.x = -1;
+            polygon.position.z = -1;
+            polygons.push(polygon);
+
+            polygon = createHutParts();
+            polygon.position.x = -2;
+            polygon.position.z = -.5;
+            polygons.push(polygon);
+
+            for (var i = 0; i < polygons.length; i++) {
+                polygons[i].scale.x = 0.65;
+                polygons[i].scale.y = 0.65;
+            }
+
+            renderer.render(scene, camera);
+            animate();
+        }
+
+
+
+        function createHutParts() {
+            var pts = [];
+
+            // Create shape
+            pts = [];
+            pts.push(new THREE.Vector2(0, 9));
+            pts.push(new THREE.Vector2(6, 9));
+            pts.push(new THREE.Vector2(9.5, 4.5));
+            pts.push(new THREE.Vector2(4, 4.5));
+
+            var shape = new THREE.Shape(pts);
+
+
+            // Amount parameter is the thickness.
+            var geom = new THREE.ExtrudeGeometry(shape, {
+                amount: 0.1,
+                bevelEnabled: false
+            });
+
+            var material = new THREE.MeshBasicMaterial({
+                color: '#f77474',
+                opacity: 0.5,
+                transparent: true
+            });
+
+            var polygon = new THREE.Mesh(geom, material);
+
+            scene.add(polygon);
+            return polygon;
+        }
+
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            renderer.render(scene, camera);
+        }
+
+        init();
+    </script>
+</body>
+
+</html>
