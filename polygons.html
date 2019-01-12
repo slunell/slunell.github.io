@@ -26,9 +26,6 @@
         var scene, camera, renderer, controls;
         var polygons = [];
 
-
-
-
         function init() {
             // create a WebGL renderer inside an existing dom element (id=main)
             renderer = new THREE.WebGLRenderer();
@@ -38,15 +35,6 @@
             document.getElementById("main").appendChild(renderer.domElement);
 
             scene = new THREE.Scene();
-
-            // Add light
-            var pointLight = new THREE.PointLight(0xFFFFFF);
-            pointLight.position.x = 10;
-            pointLight.position.y = 50;
-            pointLight.position.z = 130;
-
-            scene.add(pointLight);
-
 
             // Add camera
             camera = new THREE.PerspectiveCamera(45, ASPECT, 1, 10000);
@@ -93,10 +81,9 @@
 
             var shape = new THREE.Shape(pts);
 
-
             // Amount parameter is the thickness.
             var geom = new THREE.ExtrudeGeometry(shape, {
-                amount: 0.1,
+                amount: 0.05,
                 bevelEnabled: false
             });
 
