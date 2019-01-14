@@ -11,6 +11,11 @@
     <style>
         #main {
             overflow: hidden;
+            margin: 0;
+        }
+
+        body {
+            margin: 0;
         }
 
     </style>
@@ -21,11 +26,14 @@
 
     <script>
         var WIDTH = window.innerWidth;
-        var HEIGHT = window.innerHeight;
+        var HEIGHT = window.innerHeight * .99;
         var ASPECT = WIDTH / HEIGHT;
 
         var scene, camera, renderer, controls;
         var polygons = [];
+        var palette3 = ['#BFB5AF', '#ECE2D0', '#D5B9B2', '#A26769', '#582C4D'];
+        var palette2 = ['#393D3F', '#f2f2f2', '#C6C5B9', '#62929E', '#546A7B'];
+        var palette1 = ['#E3DFFF', '#D3C0CD', '#B19994', '#937666', '#3D3A4B'];
 
         function init() {
             // create a WebGL renderer inside an existing dom element (id=main)
@@ -36,25 +44,46 @@
             document.getElementById("main").appendChild(renderer.domElement);
 
             scene = new THREE.Scene();
+            //scene.background = new THREE.Color(0x000000);
 
             // Add camera
             camera = new THREE.PerspectiveCamera(45, ASPECT, 1, 10000);
             scene.add(camera);
             // the camera starts at 0,0,0, so pull it back
-            camera.position.set(15, 25, 60);
+            camera.position.set(100, 30, 50);
 
             // Move camera around
             controls = new THREE.OrbitControls(camera, renderer.domElement);
 
             // Main part of the code
-            var num_shapes = 50;
+            var num_shapes = 125;
             for (var i = 0; i < num_shapes; i++) {
-                var polygon = createShape();
+                var polygon = createShape(1);
                 polygon.position.x = randX();
+                polygon.position.y = -10;
                 polygon.position.z = randZ();
                 polygon.rotation.y = randRotation();
                 polygons.push(polygon);
             }
+
+            for (var i = 0; i < num_shapes; i++) {
+                var polygon = createShape(2);
+                polygon.position.x = randX();
+                polygon.position.y = 10;
+                polygon.position.z = randZ();
+                polygon.rotation.y = randRotation();
+                polygons.push(polygon);
+            }
+
+            for (var i = 0; i < num_shapes; i++) {
+                var polygon = createShape(3);
+                polygon.position.x = randX();
+                polygon.position.y = 30;
+                polygon.position.z = randZ();
+                polygon.rotation.y = randRotation();
+                polygons.push(polygon);
+            }
+
 
             renderer.render(scene, camera);
             animate();
@@ -66,22 +95,34 @@
         }
 
         function randX() {
-            return Math.random() * (2 - (1)) + (1);
+            return Math.random() * (10 - (1)) + (1);
         }
 
         function randZ() {
-            return Math.random() * (30);
+            return Math.random() * (50 - (-50)) + (-50);
         }
 
-        function createShape() {
+        function createShape(pal) {
             var pts = [];
+
+            var pt1x = Math.random() * (0 - (-5)) + (-5);
+            var pt1y = Math.random() * (5 - (0)) + (0);
+
+            var pt2x = Math.random() * (5 - (0)) + (0);
+            var pt2y = Math.random() * (5 - (0)) + (0);
+
+            var pt3x = Math.random() * (0 - (-5)) + (-5);
+            var pt3y = Math.random() * (0 - (-5)) + (-5);
+
+            var pt4x = Math.random() * (5 - (0)) + (0);
+            var pt4y = Math.random() * (0 - (-5)) + (-5);
 
             // Create shape
             pts = [];
-            pts.push(new THREE.Vector2(0, 9));
-            pts.push(new THREE.Vector2(6, 9));
-            pts.push(new THREE.Vector2(9.5, 4.5));
-            pts.push(new THREE.Vector2(4, 4.5));
+            pts.push(new THREE.Vector2(pt1x, pt1y));
+            pts.push(new THREE.Vector2(pt2x, pt2y));
+            pts.push(new THREE.Vector2(pt3x, pt3y));
+            pts.push(new THREE.Vector2(pt4y, pt4y));
 
             var shape = new THREE.Shape(pts);
 
@@ -91,9 +132,13 @@
                 bevelEnabled: false
             });
 
+            var color = (pal == 1) ? palette1[Math.floor(Math.random() * (4))] :
+                (pal == 2) ? palette2[Math.floor(Math.random() * (4))] :
+                palette3[Math.floor(Math.random() * (4))];
+
             var material = new THREE.MeshBasicMaterial({
-                color: '#f77474',
-                opacity: 0.5,
+                color: color,
+                opacity: 0.75,
                 transparent: true
             });
 
