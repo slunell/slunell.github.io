@@ -6,12 +6,13 @@
     <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
     <title>Polygons</title>
 
-    <script src="../js/three.js"></script>
+    <script src="js/three.js"></script>
     <script src="js/OrbitControls.js"></script>
     <style>
         #main {
             overflow: hidden;
         }
+
     </style>
 </head>
 
@@ -40,36 +41,39 @@
             camera = new THREE.PerspectiveCamera(45, ASPECT, 1, 10000);
             scene.add(camera);
             // the camera starts at 0,0,0, so pull it back
-            camera.position.z = 30;
+            camera.position.set(15, 25, 60);
 
+            // Move camera around
             controls = new THREE.OrbitControls(camera, renderer.domElement);
 
             // Main part of the code
-            var polygon = createHutParts();
-            polygons.push(polygon);
-
-            polygon = createHutParts();
-            polygon.position.x = -1;
-            polygon.position.z = -1;
-            polygons.push(polygon);
-
-            polygon = createHutParts();
-            polygon.position.x = -2;
-            polygon.position.z = -.5;
-            polygons.push(polygon);
-
-            for (var i = 0; i < polygons.length; i++) {
-                polygons[i].scale.x = 0.65;
-                polygons[i].scale.y = 0.65;
+            var num_shapes = 50;
+            for (var i = 0; i < num_shapes; i++) {
+                var polygon = createShape();
+                polygon.position.x = randX();
+                polygon.position.z = randZ();
+                polygon.rotation.y = randRotation();
+                polygons.push(polygon);
             }
 
             renderer.render(scene, camera);
             animate();
         }
 
+        // Random radian value
+        function randRotation() {
+            return Math.random() * (2 * Math.PI);
+        }
 
+        function randX() {
+            return Math.random() * (2 - (1)) + (1);
+        }
 
-        function createHutParts() {
+        function randZ() {
+            return Math.random() * (30);
+        }
+
+        function createShape() {
             var pts = [];
 
             // Create shape
@@ -107,6 +111,7 @@
         }
 
         init();
+
     </script>
 </body>
 
