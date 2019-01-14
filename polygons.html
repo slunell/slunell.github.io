@@ -30,9 +30,9 @@
 
         var scene, camera, renderer, controls;
         var polygons = [];
-        var palette3 = ['#BFB5AF', '#ECE2D0', '#D5B9B2', '#A26769', '#582C4D'];
-        var palette2 = ['#393D3F', '#f2f2f2', '#C6C5B9', '#62929E', '#546A7B'];
         var palette1 = ['#E3DFFF', '#D3C0CD', '#B19994', '#937666', '#3D3A4B'];
+        var palette2 = ['#393D3F', '#f2f2f2', '#C6C5B9', '#62929E', '#546A7B'];
+        var palette3 = ['#BFB5AF', '#ECE2D0', '#D5B9B2', '#A26769', '#582C4D'];
 
         function init() {
             // create a WebGL renderer inside an existing dom element (id=main)
@@ -125,19 +125,21 @@
 
             var shape = new THREE.Shape(pts);
 
-            // Amount parameter is the thickness.
+            // Amount parameter is the thickness
             var geom = new THREE.ExtrudeGeometry(shape, {
                 amount: 0.05,
                 bevelEnabled: false
             });
 
-            var color = (pal == 1) ? palette1[Math.floor(Math.random() * (4))] :
-                (pal == 2) ? palette2[Math.floor(Math.random() * (4))] :
-                palette3[Math.floor(Math.random() * (4))];
+            // Chooses random color from palette
+            var col_idx = Math.floor(Math.random() * (4));
+            var color = (pal == 1) ? palette1[col_idx] :
+                (pal == 2) ? palette2[col_idx] :
+                palette3[col_idx];
 
             var material = new THREE.MeshBasicMaterial({
                 color: color,
-                opacity: 0.75,
+                opacity: 0.80,
                 transparent: true
             });
 
@@ -145,6 +147,13 @@
 
             scene.add(polygon);
             return polygon;
+        }
+
+        function boink() {
+            requestAnimationFrame(boink);
+            camera.position.z += .1;
+
+            renderer.render(scene, camera);
         }
 
 
