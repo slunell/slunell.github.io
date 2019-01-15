@@ -8,6 +8,9 @@
 
     <script src="js/three.js"></script>
     <script src="js/OrbitControls.js"></script>
+    <script src="js/OBJLoader.js"></script>
+    <script src="js/FBXLoader.js"></script>
+
     <style>
         #main {
             overflow: hidden;
@@ -49,39 +52,29 @@
             camera = new THREE.PerspectiveCamera(45, ASPECT, 1, 10000);
             scene.add(camera);
             // the camera starts at 0,0,0, so pull it back
-            camera.position.set(100, 30, 50);
+            //camera.position.set(100, 30, 50);
+
 
             // Move camera around
             controls = new THREE.OrbitControls(camera, renderer.domElement);
 
-            // Main part of the code
-            var num_shapes = 125;
-            for (var i = 0; i < num_shapes; i++) {
-                var polygon = createShape(1);
-                polygon.position.x = randX();
-                polygon.position.y = -10;
-                polygon.position.z = randZ();
-                polygon.rotation.y = randRotation();
-                polygons.push(polygon);
-            }
+            var loader = new THREE.FBXLoader();
+            loader.load('models/frog.fbx', function(object) {
 
-            for (var i = 0; i < num_shapes; i++) {
-                var polygon = createShape(2);
-                polygon.position.x = randX();
-                polygon.position.y = 10;
-                polygon.position.z = randZ();
-                polygon.rotation.y = randRotation();
-                polygons.push(polygon);
-            }
+                scene.add(object);
 
-            for (var i = 0; i < num_shapes; i++) {
-                var polygon = createShape(3);
-                polygon.position.x = randX();
-                polygon.position.y = 30;
-                polygon.position.z = randZ();
-                polygon.rotation.y = randRotation();
-                polygons.push(polygon);
-            }
+            });
+
+
+
+
+
+
+
+
+            //            // Main part of the code
+            // var num_shapes = 125;
+            // for (var i = 0; i < num_shapes; i++) { // var polygon=createShape(1); // polygon.position.x=randX(); // polygon.position.y=-10; // polygon.position.z=randZ(); // polygon.rotation.y=randRotation(); // polygons.push(polygon); // } // // for (var i=0; i < num_shapes; i++) { // var polygon=createShape(2); // polygon.position.x=randX(); // polygon.position.y=10; // polygon.position.z=randZ(); // polygon.rotation.y=randRotation(); // polygons.push(polygon); // } // // for (var i=0; i < num_shapes; i++) { // var polygon=createShape(3); // polygon.position.x=randX(); // polygon.position.y=30; // polygon.position.z=randZ(); // polygon.rotation.y=randRotation(); // polygons.push(polygon); // }
 
 
             renderer.render(scene, camera);
@@ -149,12 +142,7 @@
             return polygon;
         }
 
-        function boink() {
-            requestAnimationFrame(boink);
-            camera.position.z += .1;
 
-            renderer.render(scene, camera);
-        }
 
 
         function animate() {
