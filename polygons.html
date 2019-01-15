@@ -89,15 +89,23 @@
             }
 
 
-            document.addEventListener( 'mousemove', onDocumentMouseMove, false );
+            document.addEventListener('mousemove', onDocumentMouseMove, false);
+            window.addEventListener('resize', onWindowResize, false);
+
             animate();
         }
 
-        function onDocumentMouseMove( event ) {
-  				event.preventDefault();
-  				mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
-  				mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
-  			}
+        function onDocumentMouseMove(event) {
+            event.preventDefault();
+            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
 
         // Random radian value
         function randRotation() {
@@ -167,24 +175,25 @@
         }
 
         function render() {
-          raycaster.setFromCamera( mouse, camera );
-          var intersects = raycaster.intersectObjects( scene.children );
-          if (intersects.length > 0) {
-            if (rot_ids.indexOf(intersects[0].object.geometry.uuid) == -1) {
-              rot_shapes.push(intersects[0]);
-              rot_ids.push(intersects[0].object.geometry.uuid);
+            raycaster.setFromCamera(mouse, camera);
+            var intersects = raycaster.intersectObjects(scene.children);
+            if (intersects.length > 0) {
+                if (rot_ids.indexOf(intersects[0].object.geometry.uuid) == -1) {
+                    rot_shapes.push(intersects[0]);
+                    rot_ids.push(intersects[0].object.geometry.uuid);
+                }
             }
-        	}
 
-          for (var i = 0; i < rot_shapes.length; i++) {
-            rot_shapes[i].object.rotation.x += 0.05;
-          }
+            for (var i = 0; i < rot_shapes.length; i++) {
+                rot_shapes[i].object.rotation.x += 0.05;
+            }
 
-          renderer.render(scene, camera);
+            renderer.render(scene, camera);
         }
 
         init();
 
     </script>
 </body>
+
 </html>
