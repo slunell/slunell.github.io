@@ -8,8 +8,6 @@
 
     <script src="js/three.js"></script>
     <script src="js/OrbitControls.js"></script>
-    <script src="js/OBJLoader.js"></script>
-    <script src="js/FBXLoader.js"></script>
 
     <style>
         #main {
@@ -46,35 +44,49 @@
             document.getElementById("main").appendChild(renderer.domElement);
 
             scene = new THREE.Scene();
-            //scene.background = new THREE.Color(0x000000);
 
             // Add camera
             camera = new THREE.PerspectiveCamera(45, ASPECT, 1, 10000);
             scene.add(camera);
             // the camera starts at 0,0,0, so pull it back
-            //camera.position.set(100, 30, 50);
+            camera.position.set(100, 30, 50);
 
 
             // Move camera around
             controls = new THREE.OrbitControls(camera, renderer.domElement);
 
-            var loader = new THREE.FBXLoader();
-            loader.load('models/frog.fbx', function(object) {
-
-                scene.add(object);
-
-            });
 
 
 
-
-
-
-
-
-            //            // Main part of the code
-            // var num_shapes = 125;
-            // for (var i = 0; i < num_shapes; i++) { // var polygon=createShape(1); // polygon.position.x=randX(); // polygon.position.y=-10; // polygon.position.z=randZ(); // polygon.rotation.y=randRotation(); // polygons.push(polygon); // } // // for (var i=0; i < num_shapes; i++) { // var polygon=createShape(2); // polygon.position.x=randX(); // polygon.position.y=10; // polygon.position.z=randZ(); // polygon.rotation.y=randRotation(); // polygons.push(polygon); // } // // for (var i=0; i < num_shapes; i++) { // var polygon=createShape(3); // polygon.position.x=randX(); // polygon.position.y=30; // polygon.position.z=randZ(); // polygon.rotation.y=randRotation(); // polygons.push(polygon); // }
+            // Main part of the code
+            var num_shapes = 125;
+            for (var i = 0; i < num_shapes; i++) {
+                var polygon = createShape(1);
+                polygon.position.x = randX();
+                polygon.position.y = -10;
+                polygon.position.z = randZ();
+                polygon.rotation.y = randRotation();
+                polygon.scale.set(1.5, 1.5, 1.5);
+                polygons.push(polygon);
+            }
+            for (var i = 0; i < num_shapes; i++) {
+                var polygon = createShape(2);
+                polygon.position.x = randX();
+                polygon.position.y = 10;
+                polygon.position.z = randZ();
+                polygon.rotation.y = randRotation();
+                polygon.scale.set(1.5, 1.5, 1.5);
+                polygons.push(polygon);
+            }
+            for (var i = 0; i < num_shapes; i++) {
+                var polygon = createShape(3);
+                polygon.position.x = randX();
+                polygon.position.y = 30;
+                polygon.position.z = randZ();
+                polygon.rotation.y = randRotation();
+                polygon.scale.set(1.5, 1.5, 1.5);
+                polygons.push(polygon);
+            }
 
 
             renderer.render(scene, camera);
