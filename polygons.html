@@ -180,26 +180,17 @@
             var intersects = raycaster.intersectObjects(scene.children);
             if (intersects.length > 0) {
                 if (rot_ids.indexOf(intersects[0].object.geometry.uuid) == -1) {
-                    rot_shapes.push([intersects[0], 0]);
+                    rot_shapes.push(intersects[0]);
                     rot_ids.push(intersects[0].object.geometry.uuid);
-                } else {
-                    var idx = rot_ids.indexOf(intersects[0].object.geometry.uuid);
-                    rot_shapes[idx] = [intersects[0], 0];
                 }
             }
 
             for (var i = 0; i < rot_shapes.length; i++) {
-                var shape = rot_shapes[i][0];
-                if (count == 0) {
-                    console.log(shape.object.rotation.x);
-                    count++;
-                }
+                var shape = rot_shapes[i];
 
-                var rotation = rot_shapes[i][1];
-
-                if (rotation < Math.PI) {
+                if (shape.object.position.y > -100) {
                     shape.object.rotation.x += 0.05;
-                    rot_shapes[i][1] += 0.05;
+                    shape.object.position.y -= 0.5;
                 }
             }
             renderer.render(scene, camera);
