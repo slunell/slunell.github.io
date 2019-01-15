@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset=utf-8>
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <title>Glass</title>
+
+    <script src="js/three.js"></script>
+    <script src="js/OrbitControls.js"></script>
+
+    <style>
+        #main {
+            overflow: hidden;
+        }
+
+        body {
+            margin: 0;
+        }
+
+    </style>
+</head>
+
+<body>
+    <div id="main"></div>
+
+    <script>
+        var WIDTH = window.innerWidth;
+        var HEIGHT = window.innerHeight;
+        var ASPECT = WIDTH / HEIGHT;
+
+        var scene, camera, renderer, controls;
+        var polygons = [];
+        var rot_shapes = [];
+        var rot_ids = [];
+        var palette1 = ['#E3DFFF', '#D3C0CD', '#B19994', '#937666', '#3D3A4B'];
+        var palette2 = ['#393D3F', '#f2f2f2', '#C6C5B9', '#62929E', '#546A7B'];
+        var palette3 = ['#BFB5AF', '#ECE2D0', '#D5B9B2', '#A26769', '#582C4D'];
+        var num_shapes = 125;
+        var mouse = new THREE.Vector2();
+        var raycaster = new THREE.Raycaster();
+
+        function init() {
+            // create a WebGL renderer inside an existing dom element (id=main)
+            renderer = new THREE.WebGLRenderer();
+            renderer.setClearColor(new THREE.Color('white'));
+            renderer.setSize(WIDTH, HEIGHT);
+
+            document.getElementById("main").appendChild(renderer.domElement);
+
+            scene = new THREE.Scene();
+
+            // Add camera
+            camera = new THREE.PerspectiveCamera(45, ASPECT, 1, 10000);
+            scene.add(camera);
+            // the camera starts at 0,0,0, so pull it back
+            camera.position.set(100, 30, 50);
+
+            // Move camera around
+            controls = new THREE.OrbitControls(camera, renderer.domElement);
+
+            // Main part of the code
+            for (var i = 0; i < num_shapes; i++) {
+                var polygon = createShape(1);
+                polygon.position.x = randX();
+                polygon.position.y = -10;
+                polygon.position.z = randZ();
+                polygon.rotation.y = randRotation();
+                polygon.scale.set(1.75, 1.75, 1.75);
+                polygons.push(polygon);
+            }
+            for (var i = 0; i < num_shapes; i++) {
+                var polygon = createShape(2);
+                polygon.position.x = randX();
+                polygon.position.y = 10;
+                polygon.position.z = randZ();
+                polygon.rotation.y = randRotation();
+                polygon.scale.set(1.75, 1.75, 1.75);
+                polygons.push(polygon);
+            }
+            for (var i = 0; i < num_shapes; i++) {
+                var polygon = createShape(3);
+                polygon.position.x = randX();
+                polygon.position.y = 30;
+                polygon.position.z = randZ();
+                polygon.rotation.y = randRotation();
+                polygon.scale.set(1.75, 1.75, 1.75);
+                polygons.push(polygon);
+            }
+
+
+            document.addEventListener('mousemove', onDocumentMouseMove, false);
+            window.addEventListener('resize', onWindowResize, false);
+
+            animate();
+        }
+
+        function onDocumentMouseMove(event) {
+            event.preventDefault();
+            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        // Random radian value
+        function randRotation() {
+            return Math.random() * (2 * Math.PI);
+        }
+
+        function randX() {
+            return Math.random() * (10 - (1)) + (1);
+        }
+
+        function randZ() {
+            return Math.random() * (50 - (-50)) + (-50);
+        }
+
+        function createShape(pal) {
+            var pts = [];
+
+            var pt1x = Math.random() * (0 - (-5)) + (-5);
+            var pt1y = Math.random() * (5 - (0)) + (0);
+
+            var pt2x = Math.random() * (5 - (0)) + (0);
+            var pt2y = Math.random() * (5 - (0)) + (0);
+
+            var pt3x = Math.random() * (0 - (-5)) + (-5);
+            var pt3y = Math.random() * (0 - (-5)) + (-5);
+
+            var pt4x = Math.random() * (5 - (0)) + (0);
+            var pt4y = Math.random() * (0 - (-5)) + (-5);
+
+            // Create shape
+            pts = [];
+            pts.push(new THREE.Vector2(pt1x, pt1y));
+            pts.push(new THREE.Vector2(pt2x, pt2y));
+            pts.push(new THREE.Vector2(pt3x, pt3y));
+            pts.push(new THREE.Vector2(pt4y, pt4y));
+
+            var shape = new THREE.Shape(pts);
+
+            // Amount parameter is the thickness
+            var geom = new THREE.ExtrudeGeometry(shape, {
+                amount: 0.05,
+                bevelEnabled: false
+            });
+
+            // Chooses random color from palette
+            var col_idx = Math.floor(Math.random() * (4));
+            var color = (pal == 1) ? palette1[col_idx] :
+                (pal == 2) ? palette2[col_idx] :
+                palette3[col_idx];
+
+            var material = new THREE.MeshBasicMaterial({
+                color: color,
+                opacity: 0.8,
+                transparent: true
+            });
+
+            var polygon = new THREE.Mesh(geom, material);
+
+            scene.add(polygon);
+            return polygon;
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            render();
+        }
+        var count = 0;
+
+        function render() {
+            raycaster.setFromCamera(mouse, camera);
+            var intersects = raycaster.intersectObjects(scene.children);
+            if (intersects.length > 0) {
+                if (rot_ids.indexOf(intersects[0].object.geometry.uuid) == -1) {
+                    rot_shapes.push(intersects[0]);
+                    rot_ids.push(intersects[0].object.geometry.uuid);
+                }
+            }
+
+            for (var i = 0; i < rot_shapes.length; i++) {
+                var shape = rot_shapes[i];
+
+                if (shape.object.position.y > -100) {
+                    shape.object.rotation.x += 0.05;
+                    shape.object.position.y -= 0.5;
+                }
+            }
+            renderer.render(scene, camera);
+        }
+
+        init();
+
+    </script>
+</body>
+
+</html>
