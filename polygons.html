@@ -31,10 +31,14 @@
 
         var scene, camera, renderer, controls;
         var polygons = [];
+        var rot_shapes = [];
+        var rot_ids = [];
         var palette1 = ['#E3DFFF', '#D3C0CD', '#B19994', '#937666', '#3D3A4B'];
         var palette2 = ['#393D3F', '#f2f2f2', '#C6C5B9', '#62929E', '#546A7B'];
         var palette3 = ['#BFB5AF', '#ECE2D0', '#D5B9B2', '#A26769', '#582C4D'];
         var num_shapes = 125;
+        var mouse = new THREE.Vector2();
+        var raycaster = new THREE.Raycaster();
 
         function init() {
             // create a WebGL renderer inside an existing dom element (id=main)
@@ -51,7 +55,6 @@
             scene.add(camera);
             // the camera starts at 0,0,0, so pull it back
             camera.position.set(100, 30, 50);
-
 
             // Move camera around
             controls = new THREE.OrbitControls(camera, renderer.domElement);
@@ -86,9 +89,15 @@
             }
 
 
-            renderer.render(scene, camera);
+            document.addEventListener( 'mousemove', onDocumentMouseMove, false );
             animate();
         }
+
+        function onDocumentMouseMove( event ) {
+  				event.preventDefault();
+  				mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+  				mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+  			}
 
         // Random radian value
         function randRotation() {
@@ -151,18 +160,31 @@
             return polygon;
         }
 
-
-
-
         function animate() {
             requestAnimationFrame(animate);
 
-            renderer.render(scene, camera);
+            render();
+        }
+
+        function render() {
+          raycaster.setFromCamera( mouse, camera );
+          var intersects = raycaster.intersectObjects( scene.children );
+          if (intersects.length > 0) {
+            if (rot_ids.indexOf(intersects[0].object.geometry.uuid) == -1) {
+              rot_shapes.push(intersects[0]);
+              rot_ids.push(intersects[0].object.geometry.uuid);
+            }
+        	}
+
+          for (var i = 0; i < rot_shapes.length; i++) {
+            rot_shapes[i].object.rotation.x += 0.05;
+          }
+
+          renderer.render(scene, camera);
         }
 
         init();
 
     </script>
 </body>
-
 </html>
