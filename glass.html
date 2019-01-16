@@ -59,35 +59,8 @@
             // Move camera around
             controls = new THREE.OrbitControls(camera, renderer.domElement);
 
-            // Main part of the code
-            for (var i = 0; i < num_shapes; i++) {
-                var polygon = createShape(1);
-                polygon.position.x = randX();
-                polygon.position.y = -10;
-                polygon.position.z = randZ();
-                polygon.rotation.y = randRotation();
-                polygon.scale.set(1.75, 1.75, 1.75);
-                polygons.push(polygon);
-            }
-            for (var i = 0; i < num_shapes; i++) {
-                var polygon = createShape(2);
-                polygon.position.x = randX();
-                polygon.position.y = 10;
-                polygon.position.z = randZ();
-                polygon.rotation.y = randRotation();
-                polygon.scale.set(1.75, 1.75, 1.75);
-                polygons.push(polygon);
-            }
-            for (var i = 0; i < num_shapes; i++) {
-                var polygon = createShape(3);
-                polygon.position.x = randX();
-                polygon.position.y = 30;
-                polygon.position.z = randZ();
-                polygon.rotation.y = randRotation();
-                polygon.scale.set(1.75, 1.75, 1.75);
-                polygons.push(polygon);
-            }
-
+            createShape();
+            createShape1();
 
             document.addEventListener('mousemove', onDocumentMouseMove, false);
             window.addEventListener('resize', onWindowResize, false);
@@ -120,52 +93,52 @@
             return Math.random() * (50 - (-50)) + (-50);
         }
 
-        function createShape(pal) {
-            var pts = [];
+        function createShape() {
+            // Create a sine-like wave
+            var curve = new THREE.SplineCurve([
+                new THREE.Vector2(-10, 0),
+                new THREE.Vector2(-5, 15),
+                new THREE.Vector2(0, 0),
+                new THREE.Vector2(5, -5),
+                new THREE.Vector2(10, 0)
+            ]);
 
-            var pt1x = Math.random() * (0 - (-5)) + (-5);
-            var pt1y = Math.random() * (5 - (0)) + (0);
+            var points = curve.getPoints(50);
+            var geometry = new THREE.BufferGeometry().setFromPoints(points);
 
-            var pt2x = Math.random() * (5 - (0)) + (0);
-            var pt2y = Math.random() * (5 - (0)) + (0);
-
-            var pt3x = Math.random() * (0 - (-5)) + (-5);
-            var pt3y = Math.random() * (0 - (-5)) + (-5);
-
-            var pt4x = Math.random() * (5 - (0)) + (0);
-            var pt4y = Math.random() * (0 - (-5)) + (-5);
-
-            // Create shape
-            pts = [];
-            pts.push(new THREE.Vector2(pt1x, pt1y));
-            pts.push(new THREE.Vector2(pt2x, pt2y));
-            pts.push(new THREE.Vector2(pt3x, pt3y));
-            pts.push(new THREE.Vector2(pt4y, pt4y));
-
-            var shape = new THREE.Shape(pts);
-
-            // Amount parameter is the thickness
-            var geom = new THREE.ExtrudeGeometry(shape, {
-                amount: 0.05,
-                bevelEnabled: false
+            var material = new THREE.LineBasicMaterial({
+                color: 0xff0000
             });
 
-            // Chooses random color from palette
-            var col_idx = Math.floor(Math.random() * (4));
-            var color = (pal == 1) ? palette1[col_idx] :
-                (pal == 2) ? palette2[col_idx] :
-                palette3[col_idx];
+            // Create the final object to add to the scene
+            var splineObject = new THREE.Line(geometry, material);
 
-            var material = new THREE.MeshBasicMaterial({
-                color: color,
-                opacity: 0.8,
-                transparent: true
+            scene.add(splineObject);
+
+        }
+
+        function createShape1() {
+            // Create a sine-like wave
+            var curve = new THREE.SplineCurve([
+                new THREE.Vector2(-5, 15),
+                new THREE.Vector2(0, 0),
+                new THREE.Vector2(5, -5),
+                new THREE.Vector2(10, 0),
+                new THREE.Vector2(15, -5)
+            ]);
+
+            var points = curve.getPoints(50);
+            var geometry = new THREE.BufferGeometry().setFromPoints(points);
+
+            var material = new THREE.LineBasicMaterial({
+                color: 0xff00f0
             });
 
-            var polygon = new THREE.Mesh(geom, material);
+            // Create the final object to add to the scene
+            var splineObject = new THREE.Line(geometry, material);
 
-            scene.add(polygon);
-            return polygon;
+            scene.add(splineObject);
+
         }
 
         function animate() {
@@ -176,23 +149,23 @@
         var count = 0;
 
         function render() {
-            raycaster.setFromCamera(mouse, camera);
-            var intersects = raycaster.intersectObjects(scene.children);
-            if (intersects.length > 0) {
-                if (rot_ids.indexOf(intersects[0].object.geometry.uuid) == -1) {
-                    rot_shapes.push(intersects[0]);
-                    rot_ids.push(intersects[0].object.geometry.uuid);
-                }
-            }
-
-            for (var i = 0; i < rot_shapes.length; i++) {
-                var shape = rot_shapes[i];
-
-                if (shape.object.position.y > -100) {
-                    shape.object.rotation.x += 0.05;
-                    shape.object.position.y -= 0.5;
-                }
-            }
+            //            raycaster.setFromCamera(mouse, camera);
+            //            var intersects = raycaster.intersectObjects(scene.children);
+            //            if (intersects.length > 0) {
+            //                if (rot_ids.indexOf(intersects[0].object.geometry.uuid) == -1) {
+            //                    rot_shapes.push(intersects[0]);
+            //                    rot_ids.push(intersects[0].object.geometry.uuid);
+            //                }
+            //            }
+            //
+            //            for (var i = 0; i < rot_shapes.length; i++) {
+            //                var shape = rot_shapes[i];
+            //
+            //                if (shape.object.position.y > -100) {
+            //                    shape.object.rotation.x += 0.05;
+            //                    shape.object.position.y -= 0.5;
+            //                }
+            //            }
             renderer.render(scene, camera);
         }
 
