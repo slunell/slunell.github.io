@@ -8,16 +8,16 @@
 
     <script src="js/three.js"></script>
     <script src="js/OrbitControls.js"></script>
+    <script src="js/AssimpJSONLoader.js"></script>
 
     <style>
         #main {
-            overflow: hidden;
+            margin-top: 50px;
         }
 
         body {
             margin: 0;
         }
-
     </style>
 </head>
 
@@ -30,13 +30,8 @@
         var ASPECT = WIDTH / HEIGHT;
 
         var scene, camera, renderer, controls;
-        var polygons = [];
         var rot_shapes = [];
         var rot_ids = [];
-        var palette1 = ['#E3DFFF', '#D3C0CD', '#B19994', '#937666', '#3D3A4B'];
-        var palette2 = ['#393D3F', '#f2f2f2', '#C6C5B9', '#62929E', '#546A7B'];
-        var palette3 = ['#BFB5AF', '#ECE2D0', '#D5B9B2', '#A26769', '#582C4D'];
-        var num_shapes = 125;
         var mouse = new THREE.Vector2();
         var raycaster = new THREE.Raycaster();
 
@@ -54,13 +49,18 @@
             camera = new THREE.PerspectiveCamera(45, ASPECT, 1, 10000);
             scene.add(camera);
             // the camera starts at 0,0,0, so pull it back
-            camera.position.set(100, 30, 50);
+            camera.position.set(10, 10, 10);
 
             // Move camera around
             controls = new THREE.OrbitControls(camera, renderer.domElement);
 
-            createShape();
-            createShape1();
+            var loader1 = new THREE.AssimpJSONLoader();
+            loader1.load('models/json/square.json', function(object) {
+
+                object.scale.multiplyScalar(0.8);
+                scene.add(object);
+
+            });
 
             document.addEventListener('mousemove', onDocumentMouseMove, false);
             window.addEventListener('resize', onWindowResize, false);
@@ -78,67 +78,6 @@
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
-        }
-
-        // Random radian value
-        function randRotation() {
-            return Math.random() * (2 * Math.PI);
-        }
-
-        function randX() {
-            return Math.random() * (10 - (1)) + (1);
-        }
-
-        function randZ() {
-            return Math.random() * (50 - (-50)) + (-50);
-        }
-
-        function createShape() {
-            // Create a sine-like wave
-            var curve = new THREE.SplineCurve([
-                new THREE.Vector2(-10, 0),
-                new THREE.Vector2(-5, 15),
-                new THREE.Vector2(0, 0),
-                new THREE.Vector2(5, -5),
-                new THREE.Vector2(10, 0)
-            ]);
-
-            var points = curve.getPoints(50);
-            var geometry = new THREE.BufferGeometry().setFromPoints(points);
-
-            var material = new THREE.LineBasicMaterial({
-                color: 0xff0000
-            });
-
-            // Create the final object to add to the scene
-            var splineObject = new THREE.Line(geometry, material);
-
-            scene.add(splineObject);
-
-        }
-
-        function createShape1() {
-            // Create a sine-like wave
-            var curve = new THREE.SplineCurve([
-                new THREE.Vector2(-5, 15),
-                new THREE.Vector2(0, 0),
-                new THREE.Vector2(5, -5),
-                new THREE.Vector2(10, 0),
-                new THREE.Vector2(15, -5)
-            ]);
-
-            var points = curve.getPoints(50);
-            var geometry = new THREE.BufferGeometry().setFromPoints(points);
-
-            var material = new THREE.LineBasicMaterial({
-                color: 0xff00f0
-            });
-
-            // Create the final object to add to the scene
-            var splineObject = new THREE.Line(geometry, material);
-
-            scene.add(splineObject);
-
         }
 
         function animate() {
@@ -170,7 +109,6 @@
         }
 
         init();
-
     </script>
 </body>
 
