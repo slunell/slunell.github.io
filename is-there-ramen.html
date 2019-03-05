@@ -9,10 +9,14 @@
     <div id="myDiv"></div>
 
     <script>
-        var url = "http://anyorigin.com/go?url=" + encodeURIComponent("https://ssf.cafebonappetit.com/") + "&callback=?";
-        $.get(url, function(response) {
-            console.log(response);
-        });
+        window.onload = test();
+
+        function test() {
+            var url = "http://www.whateverorigin.org/get?url=" + encodeURIComponent("https://ssf.cafebonappetit.com/") + "&callback=?";
+            $.get(url, function(response) {
+                console.log(response);
+            });
+        }
 
     </script>
 
