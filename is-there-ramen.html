@@ -7,14 +7,13 @@
 
 <body>
     <div id="myDiv"></div>
-
+    test
     <script>
         window.onload = test();
 
         function test() {
-            var url = "http://www.whateverorigin.org/get?url=" + encodeURIComponent("https://ssf.cafebonappetit.com/") + "&callback=?";
-            $.get(url, function(response) {
-                console.log(response);
+            $.getJSON('http://www.whateverorigin.org/get?url=' + encodeURIComponent('https://ssf.cafebonappetit.com/') + '&callback=?', function(data) {
+                alert(data.contents);
             });
         }
 
