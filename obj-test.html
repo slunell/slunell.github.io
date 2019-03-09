@@ -29,7 +29,7 @@
         }
 
         var container;
-        var camera, scene, renderer;
+        var camera, scene, renderer, controls;
 
         init();
         animate();
@@ -39,7 +39,7 @@
             document.body.appendChild(container);
 
             camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 2000);
-            var controls = new THREE.OrbitControls(camera);
+            controls = new THREE.OrbitControls(camera);
 
             camera.position.set(5, 5, 5);
             controls.update();
@@ -82,6 +82,8 @@
 
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
+
+            controls.update();
         }
 
         function animate() {
