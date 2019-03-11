@@ -9,7 +9,6 @@
         body {
             overflow: hidden;
         }
-
     </style>
 </head>
 
@@ -41,7 +40,7 @@
             camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 2000);
             controls = new THREE.OrbitControls(camera);
 
-            camera.position.set(5, 5, 5);
+            camera.position.set(-2.5, 5, 5);
             controls.update();
 
             scene = new THREE.Scene();
@@ -94,7 +93,6 @@
         function render() {
             renderer.render(scene, camera);
         }
-
     </script>
 </body>
 
