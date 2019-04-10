@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset=utf-8>
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <title>Glass</title>
+
+    <script src="js/three.js"></script>
+    <script src="js/OrbitControls.js"></script>
+    <script src="js/AssimpJSONLoader.js"></script>
+
+    <style>
+        #main {
+            margin-top: 50px;
+        }
+
+        body {
+            margin: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="main"></div>
+
+    <script>
+        var WIDTH = window.innerWidth;
+        var HEIGHT = window.innerHeight;
+        var ASPECT = WIDTH / HEIGHT;
+
+        var scene, camera, renderer, controls;
+        var rot_shapes = [];
+        var rot_ids = [];
+        var mouse = new THREE.Vector2();
+        var raycaster = new THREE.Raycaster();
+
+        function init() {
+            // create a WebGL renderer inside an existing dom element (id=main)
+            renderer = new THREE.WebGLRenderer();
+            renderer.setClearColor(new THREE.Color('white'));
+            renderer.setSize(WIDTH, HEIGHT);
+
+            document.getElementById("main").appendChild(renderer.domElement);
+
+            scene = new THREE.Scene();
+
+            // Add camera
+            camera = new THREE.PerspectiveCamera(45, ASPECT, 1, 10000);
+            scene.add(camera);
+            // the camera starts at 0,0,0, so pull it back
+            camera.position.set(10, 10, 10);
+
+            // Move camera around
+            controls = new THREE.OrbitControls(camera, renderer.domElement);
+
+            var loader1 = new THREE.AssimpJSONLoader();
+            loader1.load('models/json/square.json', function(object) {
+
+                object.scale.multiplyScalar(0.8);
+                scene.add(object);
+
+            });
+
+            document.addEventListener('mousemove', onDocumentMouseMove, false);
+            window.addEventListener('resize', onWindowResize, false);
+
+            animate();
+        }
+
+        function onDocumentMouseMove(event) {
+            event.preventDefault();
+            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            render();
+        }
+        var count = 0;
+
+        function render() {
+            //            raycaster.setFromCamera(mouse, camera);
+            //            var intersects = raycaster.intersectObjects(scene.children);
+            //            if (intersects.length > 0) {
+            //                if (rot_ids.indexOf(intersects[0].object.geometry.uuid) == -1) {
+            //                    rot_shapes.push(intersects[0]);
+            //                    rot_ids.push(intersects[0].object.geometry.uuid);
+            //                }
+            //            }
+            //
+            //            for (var i = 0; i < rot_shapes.length; i++) {
+            //                var shape = rot_shapes[i];
+            //
+            //                if (shape.object.position.y > -100) {
+            //                    shape.object.rotation.x += 0.05;
+            //                    shape.object.position.y -= 0.5;
+            //                }
+            //            }
+
+            // gradually decrease opacity
+
+            renderer.render(scene, camera);
+        }
+
+        init();
+    </script>
+</body>
+
+</html>
