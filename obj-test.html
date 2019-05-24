@@ -36,7 +36,8 @@
         function init() {
             container = document.createElement('div');
             document.body.appendChild(container);
-            var fov =  (window.innerWidth < 550) ? 80 : 50;
+
+            var fov =  (window.innerWidth < 550) ? 75 : 50;
             camera = new THREE.PerspectiveCamera(fov, window.innerWidth / window.innerHeight, 1, 2000);
             controls = new THREE.OrbitControls(camera);
 
