@@ -1,8 +1,8 @@
-# Blender MTL File: 'None'
+# Blender MTL File: 'wave_template.blend'
 # Material Count: 1
 
-newmtl Material.004
-Ns 96.078431
+newmtl Material.001
+Ns 94.117647
 Ka 1.000000 1.000000 1.000000
 Kd 0.067374 0.073692 0.075688
 Ks 0.500000 0.500000 0.500000
