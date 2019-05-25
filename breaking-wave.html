@@ -1,71 +1,94 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
-    <meta charset=utf-8>
+    <title>obj-test</title>
+    <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-    <title>Glass</title>
-
-    <script src="js/three.js"></script>
-    <script src="js/OrbitControls.js"></script>
-    <script src="js/AssimpJSONLoader.js"></script>
-
     <style>
-        #main {
-            margin-top: 50px;
+        body {
+            overflow: hidden;
         }
 
-        body {
-            margin: 0;
-        }
     </style>
 </head>
 
 <body>
-    <div id="main"></div>
+    <script src="js/three.js"></script>
+
+    <script src="js/OBJLoader.js"></script>
+    <script src="js/MTLLoader.js"></script>
+
+    <script src="js/WebGL.js"></script>
 
     <script>
-        var WIDTH = window.innerWidth;
-        var HEIGHT = window.innerHeight;
-        var ASPECT = WIDTH / HEIGHT;
+        if (WEBGL.isWebGLAvailable() === false) {
+            document.body.appendChild(WEBGL.getWebGLErrorMessage());
+        }
 
-        var scene, camera, renderer, controls;
+        var camera, scene, renderer, container;
         var rot_shapes = [];
-        var rot_ids = [];
         var mouse = new THREE.Vector2();
         var raycaster = new THREE.Raycaster();
 
-        function init() {
-            // create a WebGL renderer inside an existing dom element (id=main)
-            renderer = new THREE.WebGLRenderer();
-            renderer.setClearColor(new THREE.Color('white'));
-            renderer.setSize(WIDTH, HEIGHT);
+        var pane_list = ["wave_outline", "sky_1", "sky_2", "p1", "p2", "p3", "p3_5", "p4", "p5", "p6", "p7", "p8", "p9", "p10", "p11", "p12", "p13", "p14", "p15", "p16", "p17", "p18", "p19", "p20", "p21", "p22", "p23", "p24", "p25", "p26", "p27"];
+        var unbreakable_objects = ["wave_outline", "sky_1", "sky_2"];
+        var rotations = [];
 
-            document.getElementById("main").appendChild(renderer.domElement);
+        init();
+        animate();
+
+        function init() {
+            container = document.createElement('div');
+            document.body.appendChild(container);
+
+            var fov = (window.innerWidth < 550) ? 75 : 50;
+            camera = new THREE.PerspectiveCamera(fov, window.innerWidth / window.innerHeight, 1, 2000);
+
+            camera.position.set(-0.43, 6.6, 1.62);
+            camera.lookAt( 0, 0, 0 );
 
             scene = new THREE.Scene();
+            scene.background = new THREE.Color(0xffffff);
 
-            // Add camera
-            camera = new THREE.PerspectiveCamera(45, ASPECT, 1, 10000);
-            scene.add(camera);
-            // the camera starts at 0,0,0, so pull it back
-            camera.position.set(10, 10, 10);
+            pane_list.forEach((filename) => { 
+                var mtl_loader = new THREE.MTLLoader();
+                var obj_loader = new THREE.OBJLoader();
+                
+                mtl_loader.load(`models/${filename}.mtl`, function(materials) {
+                    materials.preload();
 
-            // Move camera around
-            controls = new THREE.OrbitControls(camera, renderer.domElement);
-
-            var loader1 = new THREE.AssimpJSONLoader();
-            loader1.load('models/json/square.json', function(object) {
-
-                object.scale.multiplyScalar(0.8);
-                scene.add(object);
-
+                    obj_loader.setMaterials(materials);
+                    obj_loader.load(`models/${filename}.obj`, function(object) {
+                        scene.add(object);
+                    });
+                });
             });
 
-            document.addEventListener('mousemove', onDocumentMouseMove, false);
-            window.addEventListener('resize', onWindowResize, false);
+            var ambientLight = new THREE.AmbientLight(0xcccccc, 0.4);
+            scene.add(ambientLight);
 
-            animate();
+            var directionalLight = new THREE.DirectionalLight(0xeeeeee);
+            directionalLight.position.set(1, 1, -1);
+            directionalLight.position.normalize();
+            scene.add(directionalLight);
+
+            renderer = new THREE.WebGLRenderer();
+            renderer.setPixelRatio(window.devicePixelRatio);
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            container.appendChild(renderer.domElement);
+
+            document.addEventListener('mousemove', onDocumentMouseMove, false);
+            document.addEventListener( 'mousedown', onDocumentMouseDown, false );
+            document.addEventListener( 'touchend', onDocumentMouseDown, false );
+            window.addEventListener('resize', onWindowResize, false);
+        }
+
+        function onWindowResize() {
+            renderer.setSize(window.innerWidth, window.innerHeight);
+
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
         }
 
         function onDocumentMouseMove(event) {
@@ -74,44 +97,43 @@
             mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
         }
 
-        function onWindowResize() {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
+        function onDocumentMouseDown(event) {
+            var objects = scene.children;
+            
+            for (var i = 0; i < objects.length; i++) {
+                if (objects[i].materialLibraries) {
+                    var name = objects[i].materialLibraries[0];
+                    name = name.substring(0, name.indexOf("."));
+                    
+                    if (pane_list.indexOf(name) > -1 && unbreakable_objects.indexOf(name) == -1) {
+                        var rotation = Math.random() * (0.01 - (-0.01)) + (-0.01);
+                        rotations.push(rotation);
+                        rot_shapes.push(objects[i]);
+                    }
+                }
+            }            
         }
 
         function animate() {
             requestAnimationFrame(animate);
-
             render();
         }
-        var count = 0;
 
         function render() {
-            //            raycaster.setFromCamera(mouse, camera);
-            //            var intersects = raycaster.intersectObjects(scene.children);
-            //            if (intersects.length > 0) {
-            //                if (rot_ids.indexOf(intersects[0].object.geometry.uuid) == -1) {
-            //                    rot_shapes.push(intersects[0]);
-            //                    rot_ids.push(intersects[0].object.geometry.uuid);
-            //                }
-            //            }
-            //
-            //            for (var i = 0; i < rot_shapes.length; i++) {
-            //                var shape = rot_shapes[i];
-            //
-            //                if (shape.object.position.y > -100) {
-            //                    shape.object.rotation.x += 0.05;
-            //                    shape.object.position.y -= 0.5;
-            //                }
-            //            }
-
-            // gradually decrease opacity
-
+            for (var i = 0; i < rot_shapes.length; i++) {
+                var shape = rot_shapes[i];
+                if (shape.position.y > -100) {
+                    shape.rotation.y += rotations[i];
+                    shape.rotation.x += rotations[i];
+                    shape.position.y -= 0.1;
+                } else {
+                    shape.visible = false;
+                }
+            }
+            
             renderer.render(scene, camera);
         }
 
-        init();
     </script>
 </body>
 
