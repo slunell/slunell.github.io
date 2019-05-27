@@ -30,7 +30,6 @@
 
         var camera, scene, renderer, container;
         var rot_shapes = [];
-        var mouse = new THREE.Vector2();
         var raycaster = new THREE.Raycaster();
 
         var pane_list = ["wave_outline", "sky_1", "sky_2", "p1", "p2", "p3", "p3_5", "p4", "p5", "p6", "p7", "p8", "p9", "p10", "p11", "p12", "p13", "p14", "p15", "p16", "p17", "p18", "p19", "p20", "p21", "p22", "p23", "p24", "p25", "p26", "p27"];
@@ -48,15 +47,15 @@
             camera = new THREE.PerspectiveCamera(fov, window.innerWidth / window.innerHeight, 1, 2000);
 
             camera.position.set(-0.43, 6.6, 1.62);
-            camera.lookAt( 0, 0, 0 );
+            camera.lookAt(0, 0, 0);
 
             scene = new THREE.Scene();
             scene.background = new THREE.Color(0xffffff);
 
-            pane_list.forEach((filename) => { 
+            pane_list.forEach((filename) => {
                 var mtl_loader = new THREE.MTLLoader();
                 var obj_loader = new THREE.OBJLoader();
-                
+
                 mtl_loader.load(`models/${filename}.mtl`, function(materials) {
                     materials.preload();
 
@@ -80,9 +79,8 @@
             renderer.setSize(window.innerWidth, window.innerHeight);
             container.appendChild(renderer.domElement);
 
-            document.addEventListener('mousemove', onDocumentMouseMove, false);
-            document.addEventListener( 'mousedown', onDocumentMouseDown, false );
-            document.addEventListener( 'touchend', onDocumentMouseDown, false );
+            document.addEventListener('mousedown', onDocumentMouseDown, false);
+            document.addEventListener('touchend', onDocumentMouseDown, false);
             window.addEventListener('resize', onWindowResize, false);
         }
 
@@ -93,27 +91,21 @@
             camera.updateProjectionMatrix();
         }
 
-        function onDocumentMouseMove(event) {
-            event.preventDefault();
-            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-        }
-
         function onDocumentMouseDown(event) {
             var objects = scene.children;
-            
+
             for (var i = 0; i < objects.length; i++) {
                 if (objects[i].materialLibraries) {
                     var name = objects[i].materialLibraries[0];
                     name = name.substring(0, name.indexOf("."));
-                    
+
                     if (pane_list.indexOf(name) > -1 && unbreakable_objects.indexOf(name) == -1) {
                         var rotation = Math.random() * (0.01 - (-0.01)) + (-0.01);
                         rotations.push(rotation);
                         rot_shapes.push(objects[i]);
                     }
                 }
-            }            
+            }
         }
 
         function animate() {
@@ -132,7 +124,7 @@
                     shape.visible = false;
                 }
             }
-            
+
             renderer.render(scene, camera);
         }
 
