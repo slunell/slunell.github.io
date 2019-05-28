@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <title>Breaking Wave</title>
     <meta charset="utf-8">
@@ -13,7 +12,6 @@
         }
     </style>
 </head>
-
 <body>
     <script src="js/three.js"></script>
     <script src="js/WebGL.js"></script>
@@ -82,7 +80,7 @@
 
         function onWindowResize() {
             renderer.setSize(window.innerWidth, window.innerHeight);
-
+            camera.fov = (window.innerWidth < 550) ? 75 : 50;
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
         }
@@ -115,7 +113,8 @@
                 if (shape.position.y > -100) {
                     shape.rotation.x += rotations[i];
                     shape.rotation.y += rotations[i];
-                    shape.position.y -= 0.1;
+                    var drop_speed = (window.innerWidth < 550) ? 0.05 : 0.1
+                    shape.position.y -= drop_speed;
                 } else {
                     shape.visible = false;
                 }
@@ -125,5 +124,4 @@
         }
     </script>
 </body>
-
 </html>
