@@ -23,12 +23,10 @@
         }
 
         var camera, scene, renderer, container;
-        var rot_shapes = [];
-        var raycaster = new THREE.Raycaster();
-
-        var pane_list = ["wave_outline", "sky_1", "sky_2", "p1", "p2", "p3", "p3_5", "p4", "p5", "p6", "p7", "p8", "p9", "p10", "p11", "p12", "p13", "p14", "p15", "p16", "p17", "p18", "p19", "p20", "p21", "p22", "p23", "p24", "p25", "p26", "p27"];
-        var unbreakable_objects = ["wave_outline", "sky_1", "sky_2"];
+        var obj_names = ["wave_outline", "sky_1", "sky_2", "p1", "p2", "p3", "p3_5", "p4", "p5", "p6", "p7", "p8", "p9", "p10", "p11", "p12", "p13", "p14", "p15", "p16", "p17", "p18", "p19", "p20", "p21", "p22", "p23", "p24", "p25", "p26", "p27"];
+        var unbreakables = ["wave_outline", "sky_1", "sky_2"];
         var rotations = [];
+        var shapes = [];
 
         init();
         animate();
@@ -46,7 +44,7 @@
             scene = new THREE.Scene();
             scene.background = new THREE.Color(0xffffff);
 
-            pane_list.forEach((filename) => {
+            obj_names.forEach((filename) => {
                 var mtl_loader = new THREE.MTLLoader();
                 var obj_loader = new THREE.OBJLoader();
 
@@ -93,10 +91,10 @@
                     var name = objects[i].materialLibraries[0];
                     name = name.substring(0, name.indexOf("."));
 
-                    if (pane_list.indexOf(name) > -1 && unbreakable_objects.indexOf(name) == -1) {
+                    if (obj_names.indexOf(name) > -1 && unbreakables.indexOf(name) == -1) {
                         var rotation = Math.random() * (0.01 - (-0.01)) + (-0.01);
                         rotations.push(rotation);
-                        rot_shapes.push(objects[i]);
+                        shapes.push(objects[i]);
                     }
                 }
             }
@@ -111,8 +109,8 @@
         }
 
         function render() {
-            for (var i = 0; i < rot_shapes.length; i++) {
-                var shape = rot_shapes[i];
+            for (var i = 0; i < shapes.length; i++) {
+                var shape = shapes[i];
                 if (shape.position.y > -100) {
                     shape.rotation.x += rotations[i];
                     shape.rotation.y += rotations[i];
