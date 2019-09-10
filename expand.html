@@ -11,8 +11,8 @@
             margin: 0;
             padding: 0;
             width: 100%;
-            /* full window width */
             text-align: center;
+            overflow: hidden;
         }
 
         #body-color {
@@ -27,6 +27,7 @@
         img {
             width: 1.5em;
             height: 1.5em;
+            cursor: pointer;
         }
 
         audio::-webkit-media-controls-panel {
@@ -66,26 +67,22 @@
 
         #choose {
             width: 0%;
-            display: inline-block;
             float: left;
         }
 
         #begin {
             width: 8%;
-            display: inline-block;
             float: left;
             margin-top: 1%;
         }
 
         #panel {
             display: inline-block;
-            float: left;
             margin-top: 0.2%;
         }
 
         #search {
             cursor: pointer;
-
         }
 
         #music-files {
@@ -93,8 +90,6 @@
             height: 0;
             position: fixed;
         }
-
-
 
         #first-div {
             margin-left: 1em;
@@ -104,8 +99,6 @@
             #image {
                 margin-left: 2.7em;
             }
-
-
         }
 
         @media only screen and (min-width: 500px) {
@@ -132,6 +125,7 @@
             float: left;
             border-radius: 15px;
             background-color: lightgray;
+            cursor: pointer;
         }
 
         #playhead {
@@ -150,14 +144,10 @@
         }
     </style>
 
-    <!-- jQuery -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-
+    <script src="../js/three.js"></script>
 </head>
-
 <body id="body-color">
     <div class="container-fluid">
         <div class="row" id="header-style">
@@ -174,50 +164,45 @@
                     </div>
                 </div>
             </div>
-
-
         </div>
     </div>
     <script>
-        var music = document.getElementById("music");
-        var playhead = document.getElementById("playhead");
-        var timelineWidth = $("#timeline").width();
-        var duration = music.duration;
+        const music = document.getElementById("music");
+        const playhead = document.getElementById("playhead");
+        const timelineWidth = document.getElementById("timeline").offsetWidth;
+        let duration = music.duration;
 
+        music.addEventListener("timeupdate", this.timeUpdate, false);
 
-
-        music.addEventListener("timeupdate", timeUpdate, false);
-
-
-        function timeUpdate() {
+        timeUpdate = () => {
             var playPercent = timelineWidth * (music.currentTime / music.duration);
             playhead.style.marginLeft = playPercent + "px";
         }
 
-        timeline.addEventListener("click", function(event) {
+        timeline.addEventListener("click", (event) => {
             moveplayhead(event);
             music.currentTime = duration * clickPercent(event);
         }, false);
 
-        function clickPercent(event) {
+        clickPercent = (event) => {
             return (event.clientX - getPosition(timeline)) / timelineWidth;
         }
 
-        var onplayhead = false;
+        let onplayhead = false;
 
-        function mouseUp(event) {
+        mouseUp = (event) => {
             if (onplayhead == true) {
-                moveplayhead(event);
-                window.removeEventListener('mousemove', moveplayhead, true);
+                this.moveplayhead(event);
+                window.removeEventListener("mousemove", this.moveplayhead, true);
                 // change current time
-                music.currentTime = duration * clickPercent(event);
-                music.addEventListener('timeupdate', timeUpdate, false);
+                music.currentTime = duration * this.clickPercent(event);
+                music.addEventListener("timeupdate", this.timeUpdate, false);
             }
             onplayhead = false;
         }
 
-        function moveplayhead(event) {
-            var newMargLeft = event.clientX - getPosition(timeline);
+        moveplayhead = (event) => {
+            const newMargLeft = event.clientX - this.getPosition(timeline);
 
             if (newMargLeft >= 0 && newMargLeft <= timelineWidth) {
                 playhead.style.marginLeft = newMargLeft + "px";
@@ -230,12 +215,12 @@
             }
         }
 
-        music.addEventListener("canplaythrough", function() {
+        music.addEventListener("canplaythrough", () => {
             duration = music.duration;
         }, false);
 
-        function moveplayhead(event) {
-            var newMargLeft = event.clientX - getPosition(timeline);
+        moveplayhead = (event) => {
+            const newMargLeft = event.clientX - this.getPosition(timeline);
 
             if (newMargLeft >= 0 && newMargLeft <= timelineWidth) {
                 playhead.style.marginLeft = newMargLeft + "px";
@@ -248,120 +233,129 @@
             }
         }
 
-        function getPosition(el) {
+        getPosition = (el) => {
             return el.getBoundingClientRect().left;
         }
-    </script>
-    <script src="../js/three.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
-    <div class="container">
-        <script>
-            var ratio = window.innerHeight / window.innerWidth;
-            window.addEventListener('resize', function() {
-                renderer.setSize(window.innerWidth * .99, window.innerWidth * ratio * .99);
-            });
+        
+        window.addEventListener("resize", () => {
+            renderer.setSize(window.innerWidth, window.innerWidth / 2);
+        });
 
-            window.onload = function(e) {
-                document.getElementById('music-files').addEventListener('change', selectMusic, false);
-                animateStart();
+        window.onload = (e) => {
+            document.getElementById("music-files").addEventListener("change", this.selectMusic, false);
+            this.animateStart();
+        }
+
+        let musicFiles = [];
+        const audioCtx = new(window.AudioContext || window.webkitAudioContext)();
+        let audio, audioSrc, analyser, bufferLength;
+        let dataArray = new Uint8Array(1024);
+        const myAudio = document.getElementById("music");
+
+        selectMusic = (e) => {
+            musicFiles = e.target.files;
+        }
+
+        getFreq = () => {
+            this.requestAnimationFrame(getFreq);
+            analyser.getByteFrequencyData(dataArray);
+        }
+
+        play = () => {
+            if (music.paused) {
+                document.getElementById("image").setAttribute("src", "img/pause.png");
+            } else {
+                document.getElementById("image").setAttribute("src", "img/play.png");
+                music.pause();
+                return;
             }
 
-
-
-            var musicFiles = [];
-            var audioCtx = new(window.AudioContext || window.webkitAudioContext)();
-            var audio;
-            var audioSrc;
-            var analyser;
-            var bufferLength;
-            var dataArray = new Uint8Array(1024);
-            var myAudio = document.getElementById('music');
-
-            function selectMusic(e) {
-                musicFiles = e.target.files;
+            if (musicFiles.length > 0) {
+                const num = Math.floor(Math.random() * musicFiles.length);
+                const musicFile = URL.createObjectURL(musicFiles[num]);
+                document.getElementById("music").setAttribute("src", musicFile);
+            } else {
+                document.getElementById("music").setAttribute("src", "mp3/seven.mp3");
             }
 
-            function getFreq() {
-                requestAnimationFrame(getFreq);
-                analyser.getByteFrequencyData(dataArray);
-            }
+            document.getElementById("music").play();
 
-            function play() {
+            audio = document.getElementById("music");
+            audioSrc = audioCtx.createMediaElementSource(audio);
+            analyser = audioCtx.createAnalyser();
+            audioSrc.connect(analyser);
+            audioSrc.connect(audioCtx.destination);
+            bufferLength = analyser.frequencyBinCount;
+            dataArray = new Uint8Array(bufferLength);
 
-                if (music.paused) {
-                    $("#image").attr("src", "img/pause.png");
+            this.getFreq();
+            this.animate();
+        }
 
-                } else {
-                    $("#image").attr("src", "img/play.png");
-                    music.pause();
-                    return;
-                }
+        isPaused = (audelem) => {
+            return audelem.paused;
+        }
 
-                if (musicFiles.length > 0) {
-                    var num = Math.floor(Math.random() * musicFiles.length);
-                    var musicFile = URL.createObjectURL(musicFiles[num]);
-                    $("#music").attr("src", musicFile);
-                } else {
-                    $("#music").attr("src", "mp3/seven.mp3");
-                }
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.1, 1000);
 
+        const renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerWidth / 2);
+        document.body.appendChild(renderer.domElement);
 
+        const geometry = new THREE.BoxGeometry(1, 1, 1);
+        const material = new THREE.MeshBasicMaterial({
+            color: "#130c96"
+        });
+        const material1 = new THREE.MeshBasicMaterial({
+            color: "purple"
+        });
+        const material2 = new THREE.MeshBasicMaterial({
+            color: "rebeccapurple"
+        });
+        const material3 = new THREE.MeshBasicMaterial({
+            color: "midnightblue"
+        });
 
+        const cube = new THREE.Mesh(geometry, material);
+        const cube1 = new THREE.Mesh(geometry, material1);
+        const cube2 = new THREE.Mesh(geometry, material2);
+        const cube3 = new THREE.Mesh(geometry, material3);
 
-                document.getElementById('music').play();
+        scene.add(cube);
+        scene.add(cube1);
+        scene.add(cube2);
+        scene.add(cube3);
 
-                audio = document.getElementById('music');
-                audioSrc = audioCtx.createMediaElementSource(audio);
-                analyser = audioCtx.createAnalyser();
-                audioSrc.connect(analyser);
-                audioSrc.connect(audioCtx.destination);
-                bufferLength = analyser.frequencyBinCount;
-                dataArray = new Uint8Array(bufferLength);
-                getFreq();
-                animate();
-            }
+        camera.position.z = 5;
 
-            function isPaused(audelem) {
-                return audelem.paused;
-            }
+        animateStart = () => {
+            this.requestAnimationFrame(animateStart);
+            cube.scale = cube1.scale = cube2.scale = cube3.scale = 1;
 
-            var scene = new THREE.Scene();
-            var camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.1, 1000);
+            cube.rotation.x += 0.011;
+            cube.rotation.y += 0.011;
 
-            var renderer = new THREE.WebGLRenderer();
-            renderer.setSize(window.innerWidth * .99, window.innerHeight * .99);
-            document.body.appendChild(renderer.domElement);
+            cube1.rotation.x -= 0.011;
+            cube1.rotation.y -= 0.011;
 
-            var geometry = new THREE.BoxGeometry(1, 1, 1);
-            var material = new THREE.MeshBasicMaterial({
-                color: "#130c96"
-            });
-            var material1 = new THREE.MeshBasicMaterial({
-                color: "purple"
-            });
-            var material2 = new THREE.MeshBasicMaterial({
-                color: "rebeccapurple"
-            });
-            var material3 = new THREE.MeshBasicMaterial({
-                color: "midnightblue"
-            });
+            cube2.rotation.x += 0.006;
+            cube2.rotation.y += 0.006;
 
-            var cube = new THREE.Mesh(geometry, material);
-            var cube1 = new THREE.Mesh(geometry, material1);
-            var cube2 = new THREE.Mesh(geometry, material2);
-            var cube3 = new THREE.Mesh(geometry, material3);
+            cube3.rotation.x -= 0.006;
+            cube3.rotation.y -= 0.006;
 
-            scene.add(cube);
-            scene.add(cube1);
-            scene.add(cube2);
-            scene.add(cube3);
+            renderer.render(scene, camera);
+        }
 
-            camera.position.z = 5;
+        animate = () => {
+            this.requestAnimationFrame(animate);
 
-            function animateStart() {
-                requestAnimationFrame(animateStart);
-                cube.scale = cube1.scale = cube2.scale = cube3.scale = 1;
-
+            if (this.isPaused(myAudio)) {
+                cube.scale.set(1, 1, 1);
+                cube1.scale.set(1, 1, 1);
+                cube2.scale.set(1, 1, 1);
+                cube3.scale.set(1, 1, 1);
 
                 cube.rotation.x += 0.011;
                 cube.rotation.y += 0.011;
@@ -374,79 +368,45 @@
 
                 cube3.rotation.x -= 0.006;
                 cube3.rotation.y -= 0.006;
+            } else {
+                cube.scale.set(0.025, 0.025, 0.025);
+                cube1.scale.set(0.025, 0.025, 0.025);
+                cube2.scale.set(0.025, 0.025, 0.025);
+                cube3.scale.set(0.025, 0.025, 0.025);
 
-                renderer.render(scene, camera);
-            }
+                for (var i = 0; i < dataArray.length; i++) {
+                    cube.scale.x += Math.pow(dataArray[i], 1.15) / 100000;
+                    cube.scale.y += Math.pow(dataArray[i], 1.15) / 100000;
+                    cube.scale.z += Math.pow(dataArray[i], 1.15) / 100000;
 
+                    cube1.scale.x += Math.pow(dataArray[i], 1.15) / 100000;
+                    cube1.scale.y += Math.pow(dataArray[i], 1.15) / 100000;
+                    cube1.scale.z += Math.pow(dataArray[i], 1.15) / 100000;
 
-            function animate() {
+                    cube2.scale.x += Math.pow(dataArray[i], 1.15) / 100000;
+                    cube2.scale.y += Math.pow(dataArray[i], 1.15) / 100000;
+                    cube2.scale.z += Math.pow(dataArray[i], 1.15) / 100000;
 
-                requestAnimationFrame(animate);
-
-                if (isPaused(myAudio)) {
-
-                    cube.scale.set(1, 1, 1);
-                    cube1.scale.set(1, 1, 1);
-                    cube2.scale.set(1, 1, 1);
-                    cube3.scale.set(1, 1, 1);
-
-                    cube.rotation.x += 0.011;
-                    cube.rotation.y += 0.011;
-
-                    cube1.rotation.x -= 0.011;
-                    cube1.rotation.y -= 0.011;
-
-                    cube2.rotation.x += 0.006;
-                    cube2.rotation.y += 0.006;
-
-                    cube3.rotation.x -= 0.006;
-                    cube3.rotation.y -= 0.006;
-
-                } else {
-
-                    cube.scale.set(0.025, 0.025, 0.025);
-                    cube1.scale.set(0.025, 0.025, 0.025);
-                    cube2.scale.set(0.025, 0.025, 0.025);
-                    cube3.scale.set(0.025, 0.025, 0.025);
-
-                    for (var i = 0; i < dataArray.length; i++) {
-
-                        cube.scale.x += Math.pow(dataArray[i], 1.15) / 100000;
-                        cube.scale.y += Math.pow(dataArray[i], 1.15) / 100000;
-                        cube.scale.z += Math.pow(dataArray[i], 1.15) / 100000;
-
-                        cube1.scale.x += Math.pow(dataArray[i], 1.15) / 100000;
-                        cube1.scale.y += Math.pow(dataArray[i], 1.15) / 100000;
-                        cube1.scale.z += Math.pow(dataArray[i], 1.15) / 100000;
-
-                        cube2.scale.x += Math.pow(dataArray[i], 1.15) / 100000;
-                        cube2.scale.y += Math.pow(dataArray[i], 1.15) / 100000;
-                        cube2.scale.z += Math.pow(dataArray[i], 1.15) / 100000;
-
-                        cube3.scale.x += Math.pow(dataArray[i], 1.15) / 100000;
-                        cube3.scale.y += Math.pow(dataArray[i], 1.15) / 100000;
-                        cube3.scale.z += Math.pow(dataArray[i], 1.15) / 100000;
-                    }
-
-                    cube.rotation.x += 0.01;
-                    cube.rotation.y += 0.01;
-
-                    cube1.rotation.x -= 0.01;
-                    cube1.rotation.y -= 0.01;
-
-                    cube2.rotation.x += 0.005;
-                    cube2.rotation.y += 0.005;
-
-                    cube3.rotation.x -= 0.005;
-                    cube3.rotation.y -= 0.005;
-
+                    cube3.scale.x += Math.pow(dataArray[i], 1.15) / 100000;
+                    cube3.scale.y += Math.pow(dataArray[i], 1.15) / 100000;
+                    cube3.scale.z += Math.pow(dataArray[i], 1.15) / 100000;
                 }
 
-                renderer.render(scene, camera);
+                cube.rotation.x += 0.01;
+                cube.rotation.y += 0.01;
 
+                cube1.rotation.x -= 0.01;
+                cube1.rotation.y -= 0.01;
+
+                cube2.rotation.x += 0.005;
+                cube2.rotation.y += 0.005;
+
+                cube3.rotation.x -= 0.005;
+                cube3.rotation.y -= 0.005;
             }
-        </script>
-    </div>
-</body>
 
+            renderer.render(scene, camera);
+        }
+    </script>
+</body>
 </html>

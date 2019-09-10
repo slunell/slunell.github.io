@@ -11,6 +11,7 @@
             padding: 0;
             width: 100%;
             text-align: center;
+            overflow: hidden;
         }
 
         #body-color {
@@ -22,11 +23,10 @@
             height: 100%;
         }
 
-
-
         img {
             width: 1.5em;
             height: 1.5em;
+            cursor: pointer;
         }
 
         audio::-webkit-media-controls-panel {
@@ -72,26 +72,22 @@
 
         #jpg {
             width: 10%;
-            display: inline-block;
             float: left;
             margin-top: 1%;
         }
 
         #choose {
             width: 0%;
-            display: inline-block;
             float: left;
         }
 
         #begin {
             width: 8%;
-            display: inline-block;
             float: left;
             margin-top: 1%;
         }
 
         #panel {
-            display: inline-block;
             float: left;
             margin-top: 0.2%;
         }
@@ -106,8 +102,6 @@
             position: fixed;
         }
 
-
-
         #first-div {
             margin-left: 1em;
         }
@@ -116,8 +110,6 @@
             #image {
                 margin-left: 2.7em;
             }
-
-
         }
 
         @media only screen and (min-width: 500px) {
@@ -144,6 +136,7 @@
             float: left;
             border-radius: 15px;
             background-color: lightgray;
+            cursor: pointer;
         }
 
         #playhead {
@@ -162,18 +155,12 @@
         }
     </style>
 
-    <!-- jQuery -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-
-
-
+    <script src="../js/three.js"></script>
 </head>
 
 <body id="body-color">
-
     <div class="container-fluid">
         <div class="row" id="header-style">
             <div class="col pt-2" id="first-div">
@@ -193,44 +180,42 @@
     </div>
 
     <script>
-        var music = document.getElementById("music");
-        var playhead = document.getElementById("playhead");
-        var timelineWidth = $("#timeline").width();
-        var duration = music.duration;
+        const music = document.getElementById("music");
+        const playhead = document.getElementById("playhead");
+        const timelineWidth = document.getElementById("timeline").offsetWidth;
+        let duration = music.duration;
 
+        music.addEventListener("timeupdate", this.timeUpdate, false);
 
-        music.addEventListener("timeupdate", timeUpdate, false);
-
-
-        function timeUpdate() {
-            var playPercent = timelineWidth * (music.currentTime / music.duration);
+        timeUpdate = () => {
+            const playPercent = timelineWidth * (music.currentTime / music.duration);
             playhead.style.marginLeft = playPercent + "px";
         }
 
-        timeline.addEventListener("click", function(event) {
+        timeline.addEventListener("click", (event) => {
             moveplayhead(event);
             music.currentTime = duration * clickPercent(event);
         }, false);
 
-        function clickPercent(event) {
+        clickPercent = (event) => {
             return (event.clientX - getPosition(timeline)) / timelineWidth;
         }
 
-        var onplayhead = false;
+        let onplayhead = false;
 
-        function mouseUp(event) {
+        mouseUp = (event) => {
             if (onplayhead == true) {
-                moveplayhead(event);
-                window.removeEventListener('mousemove', moveplayhead, true);
+                this.moveplayhead(event);
+                window.removeEventListener("mousemove", this.moveplayhead, true);
                 // change current time
-                music.currentTime = duration * clickPercent(event);
-                music.addEventListener('timeupdate', timeUpdate, false);
+                music.currentTime = duration * this.clickPercent(event);
+                music.addEventListener("timeupdate", this.timeUpdate, false);
             }
             onplayhead = false;
         }
 
-        function moveplayhead(event) {
-            var newMargLeft = event.clientX - getPosition(timeline);
+        moveplayhead = (event) => {
+            const newMargLeft = event.clientX - this.getPosition(timeline);
 
             if (newMargLeft >= 0 && newMargLeft <= timelineWidth) {
                 playhead.style.marginLeft = newMargLeft + "px";
@@ -243,12 +228,12 @@
             }
         }
 
-        music.addEventListener("canplaythrough", function() {
+        music.addEventListener("canplaythrough", () => {
             duration = music.duration;
         }, false);
 
-        function moveplayhead(event) {
-            var newMargLeft = event.clientX - getPosition(timeline);
+        moveplayhead = (event) => {
+            const newMargLeft = event.clientX - this.getPosition(timeline);
 
             if (newMargLeft >= 0 && newMargLeft <= timelineWidth) {
                 playhead.style.marginLeft = newMargLeft + "px";
@@ -261,107 +246,98 @@
             }
         }
 
-        function getPosition(el) {
+        getPosition = (el) => {
             return el.getBoundingClientRect().left;
         }
-    </script>
-
-    <script src="../js/three.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
-
-    <script>
-        var ratio = window.innerHeight / window.innerWidth;
-
-        window.addEventListener('resize', function() {
-            renderer.setSize(window.innerWidth * .99, window.innerWidth * ratio * .99);
-            console.log(window.innerWidth);
+        
+        window.addEventListener("resize", () => {
+            renderer.setSize(window.innerWidth, window.innerWidth / 2);
         });
 
-        window.onload = function(e) {
-            document.getElementById('music-files').addEventListener('change', selectMusic, false);
+        window.onload = (e) => {
+            document.getElementById("music-files").addEventListener("change", this.selectMusic, false);
+            this.animate();
         }
 
+        let musicFiles = [];
+        const audioCtx = new(window.AudioContext || window.webkitAudioContext)();
+        let audio, audioSrc, analyser, bufferLength;
+        let dataArray = new Uint8Array(1024);
+        const myAudio = document.getElementById("music");
 
-        var musicFiles = [];
-        var audioCtx = new(window.AudioContext || window.webkitAudioContext)();
-        var audio;
-        var audioSrc;
-        var analyser;
-        var bufferLength;
-        var dataArray = new Uint8Array(1024);
-
-        function selectMusic(e) {
+        selectMusic = (e) => {
             musicFiles = e.target.files;
         }
 
-        function getFreq() {
-            requestAnimationFrame(getFreq);
+        getFreq = () => {
+            this.requestAnimationFrame(getFreq);
             analyser.getByteFrequencyData(dataArray);
         }
 
-        function play() {
-
+        play = () => {
             if (music.paused) {
-                $("#image").attr("src", "img/pause.png");
-
+                document.getElementById("image").setAttribute("src", "img/pause.png");
             } else {
-                $("#image").attr("src", "img/play.png");
+                document.getElementById("image").setAttribute("src", "img/play.png");
                 music.pause();
                 return;
             }
 
             if (musicFiles.length > 0) {
-                var num = Math.floor(Math.random() * musicFiles.length);
-                var musicFile = URL.createObjectURL(musicFiles[num]);
-                $("#music").attr("src", musicFile);
+                const num = Math.floor(Math.random() * musicFiles.length);
+                const musicFile = URL.createObjectURL(musicFiles[num]);
+                document.getElementById("music").setAttribute("src", musicFile);
             } else {
-                $("#music").attr("src", "mp3/coffee.mp3");
+                document.getElementById("music").setAttribute("src", "mp3/coffee.mp3");
             }
 
-            document.getElementById('music').play();
+            document.getElementById("music").play();
 
-            audio = document.getElementById('music');
+            audio = document.getElementById("music");
             audioSrc = audioCtx.createMediaElementSource(audio);
             analyser = audioCtx.createAnalyser();
             audioSrc.connect(analyser);
             audioSrc.connect(audioCtx.destination);
             bufferLength = analyser.frequencyBinCount;
             dataArray = new Uint8Array(bufferLength);
-            getFreq();
-            animate();
+
+            this.getFreq();
+            this.animate();
         }
 
-        var scene = new THREE.Scene();
-        var camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.1, 1000);
+        isPaused = (audelem) => {
+            return audelem.paused;
+        }
 
-        var renderer = new THREE.WebGLRenderer();
-        console.log(window.innerWidth);
-        renderer.setSize(window.innerWidth * .99, window.innerHeight * .99);
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.1, 1000);
+
+        const renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerWidth / 2);
         document.body.appendChild(renderer.domElement);
 
-        var geometry = new THREE.BoxGeometry(0.5, 0.5, 0.5);
-        var material = new THREE.MeshBasicMaterial({
+        const geometry = new THREE.BoxGeometry(0.5, 0.5, 0.5);
+        const material = new THREE.MeshBasicMaterial({
             color: "rgb(0, 0, 255)"
         });
-        var material1 = new THREE.MeshBasicMaterial({
+        const material1 = new THREE.MeshBasicMaterial({
             color: "rgb(0, 0, 255)"
         });
-        var material2 = new THREE.MeshBasicMaterial({
+        const material2 = new THREE.MeshBasicMaterial({
             color: "rgb(0, 0, 255)"
         });
-        var material3 = new THREE.MeshBasicMaterial({
+        const material3 = new THREE.MeshBasicMaterial({
             color: "rgb(0, 0, 255)"
         });
-        var material4 = new THREE.MeshBasicMaterial({
+        const material4 = new THREE.MeshBasicMaterial({
             color: "rgb(0, 0, 255)"
         });
 
-
-        var cube = new THREE.Mesh(geometry, material);
-        var cube1 = new THREE.Mesh(geometry, material1);
-        var cube2 = new THREE.Mesh(geometry, material2);
-        var cube3 = new THREE.Mesh(geometry, material3);
-        var cube4 = new THREE.Mesh(geometry, material4);
+        const cube = new THREE.Mesh(geometry, material);
+        const cube1 = new THREE.Mesh(geometry, material1);
+        const cube2 = new THREE.Mesh(geometry, material2);
+        const cube3 = new THREE.Mesh(geometry, material3);
+        const cube4 = new THREE.Mesh(geometry, material4);
 
         cube.position.set(2, 0, 0);
         if (window.innerWidth < 600) {
@@ -380,17 +356,17 @@
         scene.add(cube1);
         scene.add(cube4);
 
-        var geo = new THREE.EdgesGeometry(geometry); // or WireframeGeometry( geometry )
+        const geo = new THREE.EdgesGeometry(geometry); // or WireframeGeometry( geometry )
 
-        var mat = new THREE.MeshBasicMaterial({
+        const mat = new THREE.MeshBasicMaterial({
             color: "darkblue"
         });
 
-        var wireframe = new THREE.LineSegments(geo, mat);
-        var wireframe1 = new THREE.LineSegments(geo, mat);
-        var wireframe2 = new THREE.LineSegments(geo, mat);
-        var wireframe3 = new THREE.LineSegments(geo, mat);
-        var wireframe4 = new THREE.LineSegments(geo, mat);
+        const wireframe = new THREE.LineSegments(geo, mat);
+        const wireframe1 = new THREE.LineSegments(geo, mat);
+        const wireframe2 = new THREE.LineSegments(geo, mat);
+        const wireframe3 = new THREE.LineSegments(geo, mat);
+        const wireframe4 = new THREE.LineSegments(geo, mat);
 
         wireframe.position.set(2, 0, 0);
         if (window.innerWidth < 600) {
@@ -409,21 +385,21 @@
         scene.add(wireframe3);
         scene.add(wireframe4);
 
-        var geo1 = new THREE.SphereGeometry(0.01, 33, 33, );
-        var mat1 = new THREE.MeshBasicMaterial({
+        const geo1 = new THREE.SphereGeometry(0.01, 33, 33, );
+        const mat1 = new THREE.MeshBasicMaterial({
             color: "white"
         });
 
-        var s1 = new THREE.Mesh(geo1, mat1);
-        var s2 = new THREE.Mesh(geo1, mat1);
-        var s3 = new THREE.Mesh(geo1, mat1);
-        var s4 = new THREE.Mesh(geo1, mat1);
-        var s5 = new THREE.Mesh(geo1, mat1);
-        var s6 = new THREE.Mesh(geo1, mat1);
-        var s7 = new THREE.Mesh(geo1, mat1);
-        var s8 = new THREE.Mesh(geo1, mat1);
-        var s9 = new THREE.Mesh(geo1, mat1);
-        var s10 = new THREE.Mesh(geo1, mat1);
+        const s1 = new THREE.Mesh(geo1, mat1);
+        const s2 = new THREE.Mesh(geo1, mat1);
+        const s3 = new THREE.Mesh(geo1, mat1);
+        const s4 = new THREE.Mesh(geo1, mat1);
+        const s5 = new THREE.Mesh(geo1, mat1);
+        const s6 = new THREE.Mesh(geo1, mat1);
+        const s7 = new THREE.Mesh(geo1, mat1);
+        const s8 = new THREE.Mesh(geo1, mat1);
+        const s9 = new THREE.Mesh(geo1, mat1);
+        const s10 = new THREE.Mesh(geo1, mat1);
 
 
         scene.add(s1);
@@ -437,69 +413,51 @@
         scene.add(s9);
         scene.add(s10);
 
-        var randY1;
-        var randY2;
-        var randY3;
-        var randY4;
-        var randY5;
-        var randY6;
-        var randY7;
-        var randY8;
-        var randY9;
-        var randY10;
+        let randY1, randY2, randY3, randY4, randY5, randY6, randY7, randY8, randY9, randY10;
 
-        var xDist1;
-        var xDist2;
-        var xDist3;
-        var xDist4;
-        var xDist5;
-        var xDist6;
-        var xDist7;
-        var xDist8;
-        var xDist9;
-        var xDist10;
+        let xDist1, xDist2, xDist3, xDist4, xDist5, xDist6, xDist7, xDist8, xDist9, xDist10;
 
-        var size1 = (Math.random() * 2) + 0.5;
-        var size2 = (Math.random() * 2) + 0.5;
-        var size3 = (Math.random() * 2) + 0.5;
-        var size4 = (Math.random() * 2) + 0.5;
-        var size5 = (Math.random() * 2) + 0.5;
-        var size6 = (Math.random() * 2) + 0.5;
-        var size7 = (Math.random() * 2) + 0.5;
-        var size8 = (Math.random() * 2) + 0.5;
-        var size9 = (Math.random() * 2) + 0.5;
-        var size10 = (Math.random() * 2) + 0.5;
+        let size1 = (Math.random() * 2) + 0.5;
+        let size2 = (Math.random() * 2) + 0.5;
+        let size3 = (Math.random() * 2) + 0.5;
+        let size4 = (Math.random() * 2) + 0.5;
+        let size5 = (Math.random() * 2) + 0.5;
+        let size6 = (Math.random() * 2) + 0.5;
+        let size7 = (Math.random() * 2) + 0.5;
+        let size8 = (Math.random() * 2) + 0.5;
+        let size9 = (Math.random() * 2) + 0.5;
+        let size10 = (Math.random() * 2) + 0.5;
 
-        var go1 = true;
-        var go2 = true;
-        var go3 = true;
-        var go4 = true;
-        var go5 = true;
-        var go6 = true;
-        var go7 = true;
-        var go8 = true;
-        var go9 = true;
-        var go10 = true;
+        let go1 = true;
+        let go2 = true;
+        let go3 = true;
+        let go4 = true;
+        let go5 = true;
+        let go6 = true;
+        let go7 = true;
+        let go8 = true;
+        let go9 = true;
+        let go10 = true;
 
-        var count = 0;
+        let count = 0;
 
         camera.position.z = 5;
 
-        function animate() {
+        animate = () => {
 
             requestAnimationFrame(animate);
             cube1.scale.y = cube.scale.y = cube2.scale.y = cube3.scale.y = cube4.scale.y = wireframe.scale.y = wireframe1.scale.y = wireframe2.scale.y = wireframe3.scale.y = wireframe4.scale.y = 1;
 
 
-            var bin1 = 0;
-            var bin2 = 0;
-            var bin3 = 0;
-            var bin4 = 0;
-            var bin5 = 0;
+            let bin1 = 0;
+            let bin2 = 0;
+            let bin3 = 0;
+            let bin4 = 0;
+            let bin5 = 0;
 
             count++;
 
-            for (var i = 0; i < dataArray.length; i++) {
+            for (let i = 0; i < dataArray.length; i++) {
                 if (dataArray[i] > 0 && dataArray[i] < 52) {
                     bin1 += dataArray[i];
                 } else if (dataArray[i] > 51 && dataArray[i] < 103) {
@@ -527,11 +485,11 @@
             //console.log(bin5 / 10000);
 
 
-            var red1 = bin1 / 50000;
-            var red2 = bin2 / 50000;
-            var red3 = bin3 / 50000;
-            var red4 = bin4 / 50000;
-            var red5 = bin5 / 50000;
+            const red1 = bin1 / 50000;
+            const red2 = bin2 / 50000;
+            const red3 = bin3 / 50000;
+            const red4 = bin4 / 50000;
+            const red5 = bin5 / 50000;
 
             cube.material.color.setRGB(red3, 0, (1 - red3) / 1.5);
             cube1.material.color.setRGB(red4, 0, (1 - red4) / 1.5);
@@ -825,8 +783,8 @@
             renderer.render(scene, camera);
         }
 
-        animate();
+        this.animate();
     </script>
-</body>
+    </body>
 
 </html>

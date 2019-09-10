@@ -22,16 +22,13 @@
             document.body.appendChild(WEBGL.getWebGLErrorMessage());
         }
 
-        var camera, scene, renderer, container;
-        var obj_names = ["wave_outline", "sky_1", "sky_2", "p1", "p2", "p3", "p3_5", "p4", "p5", "p6", "p7", "p8", "p9", "p10", "p11", "p12", "p13", "p14", "p15", "p16", "p17", "p18", "p19", "p20", "p21", "p22", "p23", "p24", "p25", "p26", "p27"];
-        var unbreakables = ["wave_outline", "sky_1", "sky_2"];
-        var rotations = [];
-        var shapes = [];
+        let camera, scene, renderer, container;
+        const obj_names = ["wave_outline", "sky_1", "sky_2", "p1", "p2", "p3", "p3_5", "p4", "p5", "p6", "p7", "p8", "p9", "p10", "p11", "p12", "p13", "p14", "p15", "p16", "p17", "p18", "p19", "p20", "p21", "p22", "p23", "p24", "p25", "p26", "p27"];
+        const unbreakables = ["wave_outline", "sky_1", "sky_2"];
+        const rotations = [];
+        const shapes = [];
 
-        init();
-        animate();
-
-        function init() {
+        init = () => {
             container = document.createElement('div');
             document.body.appendChild(container);
 
@@ -76,14 +73,14 @@
             window.addEventListener('resize', onWindowResize);
         }
 
-        function onWindowResize() {
+        onWindowResize = () => {
             renderer.setSize(window.innerWidth, window.innerHeight);
             camera.fov = (window.innerWidth < 550) ? 75 : 50;
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
         }
 
-        function onDocumentMouseDown(event) {
+        onDocumentMouseDown = (event) => {
             var objects = scene.children;
             for (var i = 0; i < objects.length; i++) {
                 if (objects[i].materialLibraries) {
@@ -102,12 +99,12 @@
             document.removeEventListener('touchend', onDocumentMouseDown);
         }
 
-        function animate() {
+        animate = () => {
             requestAnimationFrame(animate);
             render();
         }
 
-        function render() {
+        render = () => {
             for (var i = 0; i < shapes.length; i++) {
                 var shape = shapes[i];
                 if (shape.position.y > -100) {
@@ -122,6 +119,9 @@
 
             renderer.render(scene, camera);
         }
+
+        this.init();
+        this.animate();
     </script>
 </body>
 </html>

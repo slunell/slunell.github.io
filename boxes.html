@@ -5,16 +5,12 @@
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
     <link rel="shortcut icon" type="image/x-icon" href="img/sl_icon.ico" />
-
-    <title>Boxes</title>
-
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="https://code.jquery.com/color/jquery.color.plus-names-2.1.2.min.js" integrity="sha256-Wp3wC/dKYQ/dCOUD7VUXXp4neLI5t0uUEF1pg0dFnAE=" crossorigin="anonymous"></script>
 
+    <title>Boxes</title>
     <style>
         *,
         *:before,
@@ -62,12 +58,8 @@
 </head>
 
 <body scrolling="no">
-
-
-
     <script>
         $(document).ready(function() {
-
             var width = window.innerWidth;
             var height = window.innerHeight;
 
@@ -98,23 +90,21 @@
                 $(e.target).append('<div class="box three"></div>');
                 $(e.target).append('<div class="box four"></div>');
 
-                $(".one").animate({
+                $(".one").stop().animate({
                     backgroundColor: random_rgb()
                 }, 400);
 
-                $(".two").animate({
+                $(".two").stop().animate({
                     backgroundColor: random_rgb()
                 }, 400);
 
-                $(".three").animate({
+                $(".three").stop().animate({
                     backgroundColor: random_rgb()
                 }, 400);
 
-                $(".four").animate({
+                $(".four").stop().animate({
                     backgroundColor: random_rgb()
                 }, 400);
-
-
             });
         });
 
