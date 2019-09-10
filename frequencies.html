@@ -251,7 +251,11 @@
         }
         
         window.addEventListener("resize", () => {
-            renderer.setSize(window.innerWidth, window.innerWidth / 2);
+            if (window.innerWidth < 600) {
+                renderer.setSize(window.innerWidth, window.innerWidth * 1.5);
+            } else {
+                renderer.setSize(window.innerWidth, window.innerWidth / 2);
+            }
         });
 
         window.onload = (e) => {
@@ -313,10 +317,14 @@
         const camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.1, 1000);
 
         const renderer = new THREE.WebGLRenderer();
-        renderer.setSize(window.innerWidth, window.innerWidth / 2);
+        renderer.setSize(window.innerWidth, window.innerWidth);
+
+     
+
         document.body.appendChild(renderer.domElement);
 
         const geometry = new THREE.BoxGeometry(0.5, 0.5, 0.5);
+        
         const material = new THREE.MeshBasicMaterial({
             color: "rgb(0, 0, 255)"
         });
@@ -412,6 +420,8 @@
         scene.add(s8);
         scene.add(s9);
         scene.add(s10);
+
+        
 
         let randY1, randY2, randY3, randY4, randY5, randY6, randY7, randY8, randY9, randY10;
 
