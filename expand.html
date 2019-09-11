@@ -301,8 +301,8 @@
             audioCtx.resume();
 
             this.getFreq();
-            this.animate();
         }
+        
 
         isPaused = (audelem) => {
             return audelem.paused;
@@ -428,6 +428,8 @@
 
             renderer.render(scene, camera);
         }
+
+        this.animate();
     </script>
 </body>
 </html>
