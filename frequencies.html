@@ -803,6 +803,8 @@
             if (this.isPaused(myAudio)) {
                 document.getElementById("image").setAttribute("src", "img/play.png");
                 document.getElementById("image").setAttribute("title", "Play");
+
+                playhead.style.marginLeft = "0px";
             }
 
             renderer.render(scene, camera);
