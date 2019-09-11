@@ -290,6 +290,8 @@
             bufferLength = analyser.frequencyBinCount;
             dataArray = new Uint8Array(bufferLength);
 
+            audioCtx.resume();
+
             this.getFreq();
             this.animate();
         }
