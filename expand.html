@@ -172,12 +172,10 @@
         const timelineWidth = document.getElementById("timeline").offsetWidth;
         let duration = music.duration;
 
-        music.addEventListener("timeupdate", this.timeUpdate, false);
-
-        timeUpdate = () => {
+        music.addEventListener("timeupdate", () => {
             var playPercent = timelineWidth * (music.currentTime / music.duration);
             playhead.style.marginLeft = playPercent + "px";
-        }
+        }, false);
 
         timeline.addEventListener("click", (event) => {
             moveplayhead(event);

@@ -154,7 +154,7 @@
             margin-top: -2px
         }
     </style>
-
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <script src="../js/three.js"></script>
@@ -182,15 +182,14 @@
     <script>
         const music = document.getElementById("music");
         const playhead = document.getElementById("playhead");
+        const timeline = document.getElementById("timeline");
         const timelineWidth = document.getElementById("timeline").offsetWidth;
         let duration = music.duration;
-
-        music.addEventListener("timeupdate", this.timeUpdate, false);
-
-        timeUpdate = () => {
+        
+        music.addEventListener("timeupdate", () => {
             const playPercent = timelineWidth * (music.currentTime / music.duration);
             playhead.style.marginLeft = playPercent + "px";
-        }
+        }, false);
 
         timeline.addEventListener("click", (event) => {
             moveplayhead(event);
