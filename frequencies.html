@@ -163,11 +163,11 @@
     <div class="container-fluid">
         <div class="row" id="header-style">
             <div class="col pt-2" id="first-div">
-                <img id="search" src="../img/search.png" onclick="document.getElementById('music-files').click();" />
+                <img id="search" src="../img/search.png" title="Upload" onclick="searchMusic()" />
 
                 <audio id="music"></audio>
                 <input type="file" id="music-files" multiple accept="audio/*" />
-                <img src="img/play.png" id="image" onclick="play()">
+                <img src="img/play.png" id="image" title="Play" onclick="play()">
 
                 <div id="audio-player">
                     <div id="timeline">
@@ -267,8 +267,23 @@
         let dataArray = new Uint8Array(1024);
         const myAudio = document.getElementById("music");
 
+        audioSrc = audioCtx.createMediaElementSource(myAudio);
+        analyser = audioCtx.createAnalyser();
+        audioSrc.connect(analyser);
+        audioSrc.connect(audioCtx.destination);
+        bufferLength = analyser.frequencyBinCount;
+        dataArray = new Uint8Array(bufferLength);
+
         selectMusic = (e) => {
             musicFiles = e.target.files;
+        }
+
+        searchMusic = () => {
+            document.getElementById('music-files').click();
+
+            document.getElementById("image").setAttribute("src", "img/play.png");
+            document.getElementById("image").setAttribute("title", "Play");
+            music.pause();
         }
 
         getFreq = () => {
@@ -278,9 +293,11 @@
 
         play = () => {
             if (music.paused) {
-                document.getElementById("image").setAttribute("src", "img/pause.png");
+                document.getElementById("image").setAttribute("src", "img/stop.png");
+                document.getElementById("image").setAttribute("title", "Stop");
             } else {
                 document.getElementById("image").setAttribute("src", "img/play.png");
+                document.getElementById("image").setAttribute("title", "Play");
                 music.pause();
                 return;
             }
@@ -294,15 +311,6 @@
             }
 
             document.getElementById("music").play();
-
-            audio = document.getElementById("music");
-            audioSrc = audioCtx.createMediaElementSource(audio);
-            analyser = audioCtx.createAnalyser();
-            audioSrc.connect(analyser);
-            audioSrc.connect(audioCtx.destination);
-            bufferLength = analyser.frequencyBinCount;
-            dataArray = new Uint8Array(bufferLength);
-
             audioCtx.resume();
 
             this.getFreq();
