@@ -1,0 +1,702 @@
+<!doctype html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+
+    <title>Battleship</title>
+    <meta name="description" content="Battleshipt">
+    <meta name="author" content="Scott Lunell">
+
+    <link rel="shortcut icon" type="image/x-icon" href="img/sl_icon.ico" />
+    <style>
+      :root {
+        --side-length: 10;
+      }
+
+      body {
+        background: #386282;
+        color: white;
+        text-align: center;
+      }
+
+      #container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 15px;
+      }
+
+      #boards {
+        width: 200px;
+        display: none;
+      }
+
+      .board {
+        display: grid;
+        grid-template-columns: repeat(calc(var(--side-length) + 1), calc(200px / calc(var(--side-length) + 1)));
+        grid-template-rows: repeat(calc(var(--side-length) + 1), calc(200px / calc(var(--side-length) + 1)));
+        justify-items: center;
+        align-items: center;
+        margin: 15px 0;
+      }
+
+      .tile {
+        width: 85%;
+        padding-top: 85%;
+        border: 1px solid black;
+        border-radius: 50%;
+        background: #cde5f7;
+      }
+
+      .hover {
+        background: #a52a2a;
+        cursor: pointer;
+      }
+
+      .attacked {
+        animation: animate 1s;
+      }
+
+      .hit {
+        background: red;
+      }
+
+      .miss {
+        background: green;
+      }
+
+      .hide {
+        background: #cde5f7 !important;
+      }
+
+      .pointer {
+        cursor: pointer;
+      }
+
+      .marker {
+        justify-content: center;
+        align-items: center;
+        display: flex;
+      }
+
+      #status-box {
+        width: 300px;
+        height: 100px;
+        background: white;
+        color: black;
+        border: 1px solid black;
+      }
+
+      @keyframes animate {
+        0% {
+          width: 85%;
+          padding-top: 85%;
+        }
+        50% {
+          width: 50%;
+          padding-top: 50%;
+        }
+        100% {
+          width: 85%;
+          padding-top: 85%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="container">
+      <div id="boards">
+        <div>Player 2</div>
+        <div id="p2" class="board"></div>
+        <hr>
+        <div id="p1" class="board"></div>
+        <div>Player 1</div>
+      </div>
+      <div id="status-box">
+        <p id="status-update"><b>Battleship</b> — Choose Game Mode</p>
+        <p id="outcome"></p>
+        <div id="gamemodes">
+          <button onclick="chooseGameMode(1)">One Player</button>
+          <button onclick="chooseGameMode(2)">Two Players</button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const p1_board = document.querySelector('#p1');
+      const p2_board = document.querySelector('#p2');
+
+      // to adjust size of board, edit the --side-length css variable
+      const side_length = Number(getComputedStyle(document.documentElement).getPropertyValue('--side-length'));
+
+      let one_player = true;
+      let placer = 'p1';
+      let game_won = false;
+      let wait = false;
+      let homing = false;
+      let homing_idx = null;
+      let orientation = 'down';
+
+      // lengths of each ship
+      let lengths = [5, 4, 3, 3, 2];
+      let ship_lengths = lengths[Symbol.iterator]();
+      let ship_length = ship_lengths.next().value;
+
+      // up/right/down/left directions
+      const dirs = [-side_length, 1, side_length, -1];
+      let cpu_attack_dirs = dirs[Symbol.iterator]();
+      let cpu_attack_dir = cpu_attack_dirs.next().value;
+
+      document.addEventListener('keydown', e => changeOrientation(e));
+
+      // choose between 1 and 2 players
+      function chooseGameMode(mode) {
+        one_player = mode === 1;
+
+        // modify the status box and display the game boards
+        document.querySelector('#boards').style.display = 'block';
+        document.querySelector('#gamemodes').style.display = 'none';
+        document.querySelector('#status-box').style.marginLeft = '10%';
+
+        // build boards
+        buildBoard(p1_board);
+        buildBoard(p2_board);
+
+        if (one_player) {
+          setCPUShips();
+        }
+
+        updateStatus('<b>Player 1</b>: Set your ships!');
+      }
+
+      // build each board
+      function buildBoard(board) {
+        for (let i = 0; i <= side_length; i++) {
+          // create the tiles that hold the number markers on top
+          const num_tile = document.createElement('div');
+          num_tile.classList.add('marker');
+          if (i > 0) num_tile.innerHTML = i;
+          board.appendChild(num_tile);
+        }
+
+        // create the rest of the tiles
+        for (let i = 0; i < side_length * side_length; i++) {
+          const idx = i;
+          const tile = document.createElement('div');
+          tile.classList.add('tile');
+
+          if (board.id === 'p1') {
+            tile.onclick = () => setShip(idx, board);
+            tile.onmouseover = () => onHover(idx, board);
+            tile.onmouseout = () => onLeave(board);
+          }
+
+          // hide the CPU's tiles if 1-player mode
+          if (board.id === 'p2' && one_player) {
+            tile.classList.add('hide');
+          }
+
+          // create the letter marker tiles on the left-hand side of the board
+          if (idx % side_length === 0) {
+            const letter_tile = document.createElement('div');
+            letter_tile.classList.add('marker');
+            letter_tile.innerHTML = String.fromCharCode(Math.floor(idx / side_length) + 65);
+            board.appendChild(letter_tile);
+          }
+
+          board.appendChild(tile);
+        }
+      }
+
+      // sets up the turn for p1
+      function p1Turn() {
+        console.log("Player 1's Turn!");
+
+        const p1_tiles = p1_board.querySelectorAll('.tile');
+        const p2_tiles = p2_board.querySelectorAll('.tile');
+
+        // show all tiles for p1's board
+        for (const tile of p1_tiles) {
+          tile.onclick = null;
+          tile.classList.remove('hide');
+          tile.classList.remove('pointer');
+        }
+
+        // hide all tiles of p2's board that have not been attacked
+        for (const tile of p2_tiles) {
+          tile.onclick = () => attack(tile, p2_board);
+          tile.classList.add('pointer');
+          if (tile.classList.contains('ship') && !tile.classList.contains('attacked')) {
+            tile.classList.add('hide');
+          }
+        }
+
+        updateStatus('<b>Player 1</b>: Fire your torpedo!');
+        updateOutcome('');
+      }
+
+      // sets up the turn for p2
+      function p2Turn() {
+        console.log("Player 2's Turn!");
+
+        const p1_tiles = p1_board.querySelectorAll('.tile');
+        const p2_tiles = p2_board.querySelectorAll('.tile');
+
+        // show all tiles for p2's board
+        for (const tile of p2_tiles) {
+          tile.onclick = null;
+          tile.classList.remove('hide');
+          tile.classList.remove('pointer');
+        }
+
+        // hide all tiles of p1's board that have not been attacked
+        for (const tile of p1_tiles) {
+          tile.onclick = () => attack(tile, p1_board);
+          tile.classList.add('pointer');
+          if (tile.classList.contains('ship') && !tile.classList.contains('attacked')) {
+            tile.classList.add('hide');
+          }
+        }
+
+        updateStatus('<b>Player 2</b>: Fire your torpedo!');
+        updateOutcome('');
+      }
+
+      // general attack function that adds the outcome classes to the attacked tile
+      function attack(tile, board) {
+        if (game_won || wait) return;
+
+        let outcome = '';
+
+        // if tile has already been attacked, do nothing
+        // otherwise mark it as attacked
+        if (tile.classList.contains('attacked')) {
+          if (board.id === 'p2') {
+            console.log('Already Taken!');
+          }
+          outcome = 'Already Taken!';
+        } else {
+          tile.classList.add('attacked');
+
+          // if attacked tile is part of a ship, check if ship has been sunk
+          // if ship is sunk, check if game has been won
+          if (tile.classList.contains('ship')) {
+            console.log('Hit!');
+            outcome = 'Hit!';
+
+            tile.style.backgroundColor = '';
+            tile.classList.add('hit');
+
+            if (checkSunk(tile, board)) {
+              console.log('Ship Sunk!');
+              outcome = 'Ship Sunk!';
+
+              if (checkWin(board)) {
+                console.log('You won!');
+                outcome = 'You won!';
+                unhide();
+              }
+            }
+          } else {
+            console.log('Miss!');
+            outcome = 'Miss!';
+            tile.classList.add('miss');
+          }
+        }
+
+        // if game has not been won, print the outcome of the attack and set up next turn
+        if (!game_won) {
+          updateOutcome(outcome);
+          prepareSetup(outcome, board, tile);
+        }
+
+        return outcome;
+      }
+
+      // prepares the setup for the next player
+      function prepareSetup(outcome, board, tile) {
+        if (outcome !== 'Already Taken!') {
+          if (board.id === 'p1' || board.id === 'p2') {
+            tile.classList.remove('hide');
+          }
+
+          // wait 1 second so that attack animation can finish
+          wait = true;
+          setTimeout(() => {
+            wait = false;
+            if (!one_player) {
+              if (board.id === 'p2') {
+                p2Turn();
+              } else if (board.id === 'p1') {
+                p1Turn();
+              }
+            } else {
+              if (board.id === 'p2' && !game_won) {
+                cpuAttackDecision();
+              }
+            }
+          }, 1000);
+        }
+      }
+
+      // function used by the CPU to decide between a random attack or an attack that is next to a previous hit
+      function cpuAttackDecision() {
+        console.log(`CPU's turn!`);
+        updateStatus('<b>CPU</b>: Fire your torpedo!');
+
+        if (homing) {
+          cpuHomingAttack(homing_idx, p1_board);
+        } else {
+          cpuAttack(p1_board);
+        }
+
+        // wait 1 second so that attack animation can finish
+        if (!game_won) {
+          setTimeout(() => p1Turn(), 1000);
+        }
+      }
+
+      // default random CPU attack
+      function cpuAttack(board) {
+        const tiles = board.querySelectorAll('.tile');
+
+        let reattack = true;
+        while (reattack) {
+          const rand_idx = Math.round(Math.random() * (side_length * side_length - 1));
+
+          // Find new random index if empty tile is not next to a hit tile or another empty tile
+          // Avoids attacking tiles that are surrounded by misses on all sides (ships have a length of at least 2)
+          let empty_neighbor = false;
+          const directions = [-side_length, 1, side_length, -1];
+          for (const d of directions) {
+            const neighbor_idx = rand_idx + d;
+            if (d === 1) {
+              if (neighbor_idx % side_length === 0) continue;
+            } else if (d === -1) {
+              if (neighbor_idx % side_length === side_length - 1) continue;
+            }
+
+            const neighbor = tiles[neighbor_idx];
+            if (!neighbor) continue;
+            if (!neighbor.classList.contains('attacked') || neighbor.classList.contains('hit')) {
+              empty_neighbor = true;
+            }
+          }
+
+          if (!empty_neighbor) continue;
+
+          const tile = tiles[rand_idx];
+          const outcome = attack(tile, board);
+
+          // if outcome is "Hit!" and the ship is not yet sunk, then begin homing attack
+          if (outcome === 'Hit!') {
+            if (!checkSunk(tile, board)) {
+              homing = true;
+              homing_idx = rand_idx;
+            }
+          }
+
+          // get new index if the index has already been used
+          reattack = outcome === 'Already Taken!';
+        }
+      }
+
+      // CPU attack function that attacks a neighboring tile from a previous hit
+      // The CPU checks all up/down/left/right directions after a hit outcome
+      // If the outcome is a Sunk/Won, or all directions have been checked, the attack will revert to the default random attack
+      function cpuHomingAttack(idx, board) {
+        // checks for neighboring tiles that have a row or column index that is out of bounds
+        while (
+          ((idx + cpu_attack_dir) % side_length === 0 && Math.abs(cpu_attack_dir) !== side_length) ||
+          idx + cpu_attack_dir < 0 ||
+          idx + cpu_attack_dir > side_length * side_length - 1
+        ) {
+          cpu_attack_dir = cpu_attack_dirs.next().value;
+        }
+
+        // if no more empty neighboring tiles, switch back to normal attack
+        if (!cpu_attack_dir) {
+          cpuAttack(board);
+          homing = false;
+          cpu_attack_dirs = dirs[Symbol.iterator]();
+          cpu_attack_dir = cpu_attack_dirs.next().value;
+          return;
+        }
+
+        const tiles = board.querySelectorAll('.tile');
+
+        // while an attack results in an already-taken tile, look in a new direction
+        let reattack = true;
+        while (reattack) {
+          const adj_idx = idx + cpu_attack_dir;
+          const tile = tiles[adj_idx];
+
+          // if tile does not exist, then do a normal attack
+          if (!tile) {
+            cpuAttack(board);
+            homing = false;
+            cpu_attack_dirs = dirs[Symbol.iterator]();
+            cpu_attack_dir = cpu_attack_dirs.next().value;
+            return;
+          }
+
+          const outcome = attack(tile, board);
+
+          // CPU attack logic based on attack outcome
+          switch (outcome) {
+            case 'You Won!':
+            case 'Ship Sunk!':
+              homing = false;
+              cpu_attack_dirs = dirs[Symbol.iterator]();
+              cpu_attack_dir = cpu_attack_dirs.next().value;
+              return;
+
+            case 'Hit!':
+              homing_idx = adj_idx;
+              cpu_attack_dirs = dirs[Symbol.iterator]();
+              cpu_attack_dir = cpu_attack_dirs.next().value;
+              break;
+
+            case 'Miss!':
+            case 'Already Taken!':
+              cpu_attack_dir = cpu_attack_dirs.next().value;
+              break;
+
+            default:
+              break;
+          }
+
+          // if no more empty neighboring tiles, switch back to default attack
+          if (!cpu_attack_dir) {
+            homing = false;
+            if (outcome === 'Already Taken!') {
+              cpuAttack(board);
+            }
+
+            cpu_attack_dirs = dirs[Symbol.iterator]();
+            cpu_attack_dir = cpu_attack_dirs.next().value;
+            return;
+          }
+
+          reattack = outcome === 'Already Taken!';
+        }
+      }
+
+      // check if attack has resulted in a sunken ship
+      function checkSunk(tile, board) {
+        const id = tile.getAttribute('ship-id');
+        const length = Number(tile.getAttribute('ship-length'));
+        const attacked_pieces = board.querySelectorAll(`div[ship-id='${id}'].hit`);
+
+        return attacked_pieces.length === length;
+      }
+
+      // check if attack has resulted in a victory
+      function checkWin(board) {
+        const attacked_pieces = board.querySelectorAll('.hit');
+        const total_pieces = lengths.reduce((acc, curr) => acc + curr);
+
+        if (attacked_pieces.length === total_pieces) {
+          updateStatus(board.id === 'p2' ? '<b>Player 1 Wins!</b>' : one_player ? '<b>CPU Wins!</b>' : '<b>Player 2 Wins!</b>');
+          updateOutcome('');
+          game_won = true;
+          return true;
+        }
+
+        return false;
+      }
+
+      // allows the user to change the orientation of the ships with the arrow keys when placing the ships
+      function changeOrientation(e) {
+        e = e || window.event;
+        e.preventDefault();
+
+        switch (e.keyCode) {
+          case 37:
+            orientation = 'left';
+            break;
+          case 38:
+            orientation = 'up';
+            break;
+          case 39:
+            orientation = 'right';
+            break;
+          case 40:
+            orientation = 'down';
+            break;
+        }
+
+        let board = placer === 'p1' ? p1_board : p2_board;
+
+        // rewrite existing hovers
+        const hovers = board.querySelectorAll('.hover');
+        if (hovers.length > 0) {
+          const idx = [...board.querySelectorAll('.tile')].indexOf(board.querySelector('#hovered'));
+          onLeave(board);
+          onHover(idx, board);
+        }
+      }
+
+      // Hover function for setting up the ships
+      // Calculates which tiles to change color to represent each ship
+      // Makes sure that the ship stays in-bounds no matter what tile is hovered over
+      function onHover(idx, board) {
+        const tiles = board.querySelectorAll('.tile');
+        tiles[idx].id = 'hovered';
+
+        let idx_start = idx;
+        switch (orientation) {
+          case 'left':
+            idx_start = idx % side_length < ship_length - 1 ? idx - (idx % side_length) + ship_length - 1 : idx;
+            // add new hovers
+            for (let i = idx_start; i > idx_start - ship_length; i--) {
+              tiles[i].classList.add('hover');
+            }
+            break;
+
+          case 'up':
+            idx_start = Math.floor(idx / side_length) < ship_length - 1 ? idx + (ship_length - 1 - Math.floor(idx / side_length)) * side_length : idx;
+            // add new hovers
+            for (let i = 0; i < ship_length; i++) {
+              tiles[idx_start - i * side_length].classList.add('hover');
+            }
+            break;
+
+          case 'right':
+            idx_start = idx % side_length > side_length - ship_length ? idx - (idx % side_length) + (side_length - ship_length) : idx;
+            // add new hovers
+            for (let i = idx_start; i < idx_start + ship_length; i++) {
+              tiles[i].classList.add('hover');
+            }
+            break;
+
+          case 'down':
+            idx_start =
+              Math.floor(idx / side_length) > side_length - ship_length
+                ? idx + (side_length - ship_length - Math.floor(idx / side_length)) * side_length
+                : idx;
+            // add new hovers
+            for (let i = 0; i < ship_length; i++) {
+              tiles[idx_start + i * side_length].classList.add('hover');
+            }
+            break;
+
+          default:
+            break;
+        }
+      }
+
+      // removes the existing hover colors when the mouse leaves a tile
+      function onLeave(board) {
+        const hovers = board.querySelectorAll('.hover');
+        if (hovers.length > 0) {
+          for (const tile of hovers) {
+            tile.classList.remove('hover');
+          }
+        }
+
+        board.querySelector('#hovered').id = '';
+      }
+
+      // Function to place each ship on the board
+      // Return true/false to let the CPU know whether to attack a new tile or not
+      function setShip(idx, board) {
+        if (!ship_length) return false;
+
+        const hovers = board.querySelectorAll('.hover');
+        if (hovers.length === 0) return true;
+
+        // check for overlap
+        for (const tile of hovers) {
+          if (tile.classList.contains('ship')) return true;
+        }
+
+        // convert tile to ship
+        for (const tile of hovers) {
+          tile.classList.remove('hover');
+          tile.classList.add('ship');
+          tile.setAttribute('ship-length', ship_length);
+          tile.setAttribute('ship-id', idx);
+          tile.style.backgroundColor = `rgba(186, 112, 37, ${ship_length / Math.max(...lengths)})`;
+        }
+
+        // iterate through the ship lengths
+        ship_length = ship_lengths.next().value;
+
+        // if all ships have been placed by a player, move on to next player's turn
+        if (!ship_length) {
+          // if p1 has placed all ships, it is either p2's turn to set all ships or it is time for p1 to begin the game
+          if (board.id === 'p1' && !one_player) {
+            const p1_tiles = p1_board.querySelectorAll('.tile');
+            for (const tile of p1_tiles) {
+              tile.onclick = null;
+              tile.onmouseover = null;
+              tile.onmouseout = null;
+              tile.classList.add('hide');
+            }
+
+            const p2_tiles = p2_board.querySelectorAll('.tile');
+            for (let i = 0; i < p2_tiles.length; i++) {
+              const idx = i;
+              p2_tiles[idx].onclick = () => setShip(idx, p2_board);
+              p2_tiles[idx].onmouseover = () => onHover(idx, p2_board);
+              p2_tiles[idx].onmouseout = () => onLeave(p2_board);
+            }
+
+            ship_lengths = lengths[Symbol.iterator]();
+            ship_length = ship_lengths.next().value;
+
+            placer = 'p2';
+
+            updateStatus('<b>Player 2</b>: Set your ships!');
+          } else if (board.id === 'p2' && !one_player) {
+            p1Turn();
+          } else if (board.id === 'p1' && one_player) {
+            p1Turn();
+          }
+        }
+
+        return false;
+      }
+
+      // automatically places all ships for the CPU in a random arrangement
+      function setCPUShips() {
+        for (let i = 0; i < lengths.length; i++) {
+          let redo = true;
+          while (redo) {
+            const rand_idx = Math.round(Math.random() * (side_length * side_length - 1));
+            orientation = rand_idx % 2 === 0 ? 'right' : 'down';
+            onHover(rand_idx, p2_board);
+            redo = setShip(rand_idx, p2_board);
+            onLeave(p2_board);
+          }
+        }
+
+        ship_lengths = lengths[Symbol.iterator]();
+        ship_length = ship_lengths.next().value;
+      }
+
+      // unhides all tiles on the board after a player wins the game
+      function unhide() {
+        const tiles = document.querySelectorAll('.tile');
+        for (const tile of tiles) {
+          tile.classList.remove('hide');
+          tile.classList.remove('pointer');
+          tile.onclick = null;
+        }
+      }
+
+      // updates the main status in the status box
+      function updateStatus(text) {
+        document.querySelector('#status-update').innerHTML = text;
+      }
+
+      // updates the outcome of an attack in the status box
+      function updateOutcome(text) {
+        document.querySelector('#outcome').innerHTML = text;
+      }
+
+    </script>
+  </body>
+</html>
