@@ -1,0 +1,132 @@
+<html>
+  <head>
+    <style>
+      body {
+        color: black;
+        font-family: sans-serif;
+        background: white;
+      }
+
+      h4 {
+        margin-top: 40px;  
+      }
+
+      p {
+        line-height: 1.5;
+      }
+
+      #loading-bar-wrapper {
+        width: 100%;
+        height: 50px;
+        border: 1px solid black;
+        border-radius: 4px;
+        overflow: hidden;
+      }
+
+      #loading-bar {
+        background-color: #ffcf50;
+        width: 0%;
+        height: 100%;
+        transition: 100ms;
+      }
+
+      i {
+        background-color: #ddd;
+        font-family: monospace;
+        padding: 2px 8px;
+        border-radius: 2px;
+        font-style: normal;
+      }
+
+      section {
+        max-width: 500px;
+        padding: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <section>
+      <h1>Animation Sequence</h1>
+      <h3>Instructions</h3>
+      <p>We have a Javascript ES6 class called <i>AnimationSequence</i>.
+        Its constructor takes a DOM element and an array.</p>
+      <p>It also has a function, <i>AnimationSequence.prototype.animate</i>
+        that when invoked will result in an animation. Its purpose is to
+        apply the styles defined in the instance's <i>frames</i>, as
+        defined in each array element's <i>styles</i> object. Each frame
+        should delay by the element's <i>delay</i> value. Note that this
+        delay value is relative to the previous frame.</p>
+      <p>Your task is to write the <i>AnimationSequence.prototype.animate</i>
+        function to support this. If done properly, you will see a
+        yellow bar fill up the box below like a loading bar if you click
+        the button.</p>
+      <p><strong>Bonus: </strong>Implement a pausing function that will
+        pause the animation.</p>
+      <p><strong>Note: </strong>You are not allowed the use of any
+        libraries.</p>
+      <div id="loading-bar-wrapper">
+        <div id="loading-bar">
+        </div>
+      </div>
+      <button id="bar-animate">Animate</button>
+      <button id="bar-pause">Pause</button>
+    </section>
+  </body>
+  <script>
+    
+    class AnimationSequence {
+      constructor(domElement, frames) {
+        this.domElement = domElement;
+        this.frames = frames;
+        this.paused = false;
+      }
+      
+      animate = async () => {
+        console.log('Animate!');
+        
+        for (const frame of this.frames) {
+            await this.wait(frame.delay);
+            console.log(frame.styles.width);
+            this.domElement.style.width = frame.styles.width;
+        }
+      }
+
+      pause = () => {
+        console.log('Pause!');
+        this.paused = true;
+      }
+
+      wait = (delay) => {
+          return new Promise(resolve => {
+              setTimeout(() => {
+                  if (!this.paused) {
+                    resolve('resolved');
+                  }
+            }, delay);
+          })
+      }
+    }
+    
+    const loaderFrames = [
+      { styles: { width: '10%' }, delay: 225 },
+      { styles: { width: '20%' }, delay: 420 },
+      { styles: { width: '30%' }, delay: 1150 },
+      { styles: { width: '40%' }, delay: 210 },
+      { styles: { width: '50%' }, delay: 300 },
+      { styles: { width: '60%' }, delay: 1150 },
+      { styles: { width: '70%' }, delay: 250 },
+      { styles: { width: '80%' }, delay: 275 },
+      { styles: { width: '90%' }, delay: 325 },
+      { styles: { width: '100%' }, delay: 175 },
+    ];
+    
+    const loaderDom = document.querySelector('#loading-bar');
+    const loaderAnimation = new AnimationSequence(loaderDom, loaderFrames);
+    
+    document.querySelector('#bar-animate').addEventListener('click', loaderAnimation.animate);
+    document.querySelector('#bar-pause').addEventListener('click', loaderAnimation.pause);
+    
+    
+    
+  </script>
+</html>
